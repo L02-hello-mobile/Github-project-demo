@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - [cite_start]w8-sonar  # Kích hoạt khi push lên nhánh w8-sonar [cite: 342]
+      - w8-sonar
   pull_request:
     branches:
       - main
@@ -16,21 +16,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          [cite_start]fetch-depth: 0 # Quan trọng cho SonarCloud [cite: 329]
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          [cite_start]node-version: 18 [cite: 355]
+          node-version: 18
 
       - name: Install Dependencies
-        [cite_start]run: npm install --legacy-peer-deps [cite: 356]
+        run: npm install --legacy-peer-deps
 
       - name: Run Tests with Coverage
-        # Lệnh này sinh ra file coverage/lcov.info để Sonar đọc [cite: 373, 396]
+        # Lệnh này thực hiện chạy test và xuất kết quả coverage [cite: 373]
         run: npm run test
 
       - name: SonarCloud Scan
+        # Sử dụng action để phân tích chất lượng code trên SonarCloud [cite: 337, 391]
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

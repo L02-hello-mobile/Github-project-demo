@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1777216122731" clover="3.2.0">
-  <project timestamp="1777216122731" name="All files">
+<coverage generated="1777218731353" clover="3.2.0">
+  <project timestamp="1777218731353" name="All files">
     <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4" elements="13" coveredelements="13" complexity="0" loc="9" ncloc="9" packages="1" files="2" classes="2"/>
     <file name="HomeScreen.tsx" path="C:\Users\PC\Desktop\btl mobile\assignment-mobile\screens\HomeScreen.tsx">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
