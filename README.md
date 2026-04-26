@@ -56,7 +56,7 @@ This project uses **Jest** and **React Native Testing Library** for testing.
 - **Run tests with coverage report:**
 
   ```bash
-  npm test
+  npm run test:coverage
   ```
 
   After running, view the detailed HTML report at:
