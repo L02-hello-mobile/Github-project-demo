@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function OnboardingScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Trang trí góc trái */}
+    <View style={styles.container}>
       <View style={styles.topBlob} />
 
       <View style={styles.content}>
         <Text style={styles.title}>Chào mừng trở lại</Text>
         
-        {/* Hình minh họa - Thay bằng link ảnh của bạn hoặc placeholder */}
         <View style={styles.illustrationPlaceholder}>
             <View style={styles.circleBg} />
             <Text style={{fontSize: 50}}>📱</Text>
@@ -57,7 +55,7 @@ export default function OnboardingScreen({ navigation }: any) {
             </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

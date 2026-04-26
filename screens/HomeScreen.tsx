@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const [taskState, setTaskState] = useState('Xem nhiệm vụ');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea}>
         
         {/* Header */}
@@ -21,7 +21,7 @@ export default function HomeScreen() {
           <Ionicons name="notifications" size={26} color="#1F2937" />
         </View>
 
-        {/* Banner Tím Bo Góc */}
+        {/* Banner Tím */}
         <View style={styles.banner}>
           <View style={{flex: 1}}>
             <Text style={styles.bannerTitle}>Nhiệm vụ của bạn sắp hoàn thành!</Text>
@@ -40,9 +40,10 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Đang diễn ra (Ngang) */}
+        {/* Đang diễn ra */}
         <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Đang diễn ra <Text style={styles.count}>6</Text></Text>
+            <Text style={styles.sectionTitle}>Đang diễn ra</Text>
+            <View style={styles.badge}><Text style={styles.badgeText}>6</Text></View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
             <View style={styles.cardH}>
@@ -51,14 +52,17 @@ export default function HomeScreen() {
                 <View style={styles.pBar}><View style={[styles.pFill, {width: '60%'}]} /></View>
             </View>
             <View style={[styles.cardH, {backgroundColor: '#FFEDD5'}]}>
-                <Text style={styles.tag}>Âm nhạc</Text>
+                <Text style={styles.tag}>Câu lạc bộ âm nhạc</Text>
                 <Text style={styles.cardHTitle}>Sound check</Text>
                 <View style={styles.pBar}><View style={[styles.pFill, {width: '30%', backgroundColor: '#F97316'}]} /></View>
             </View>
         </ScrollView>
 
-        {/* Sự kiện (Dọc) */}
-        <Text style={styles.sectionTitle}>Sự kiện <Text style={styles.count}>4</Text></Text>
+        {/* Sự kiện */}
+        <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Sự kiện</Text>
+            <View style={styles.badge}><Text style={styles.badgeText}>4</Text></View>
+        </View>
         <View style={styles.eventItem}>
             <View style={[styles.iconBox, {backgroundColor: '#FCE7F3'}]}><Ionicons name="briefcase" size={20} color="#DB2777" /></View>
             <View style={{flex: 1, marginLeft: 15}}>
@@ -68,17 +72,25 @@ export default function HomeScreen() {
             <Text style={styles.eventPercent}>70%</Text>
         </View>
         <View style={styles.eventItem}>
-            <View style={[styles.iconBox, {backgroundColor: '#E0E7FF'}]}><Ionicons name="musical-notes" size={20} color="#4F46E5" /></View>
+            <View style={[styles.iconBox, {backgroundColor: '#E0E7FF'}]}><Ionicons name="person" size={20} color="#4F46E5" /></View>
             <View style={{flex: 1, marginLeft: 15}}>
                 <Text style={styles.eventTitle}>Câu lạc bộ âm nhạc</Text>
                 <Text style={styles.eventSub}>30 Tasks</Text>
             </View>
             <Text style={styles.eventPercent}>52%</Text>
         </View>
+        <View style={styles.eventItem}>
+            <View style={[styles.iconBox, {backgroundColor: '#FFEDD5'}]}><Ionicons name="book" size={20} color="#F97316" /></View>
+            <View style={{flex: 1, marginLeft: 15}}>
+                <Text style={styles.eventTitle}>Team building</Text>
+                <Text style={styles.eventSub}>30 Tasks</Text>
+            </View>
+            <Text style={styles.eventPercent}>87%</Text>
+        </View>
 
       </ScrollView>
 
-      {/* Thanh Menu Dưới (Bottom Tab giả) */}
+      {/* Thanh Menu Dưới */}
       <View style={styles.bottomTab}>
         <Ionicons name="home" size={24} color="#6366F1" />
         <Ionicons name="calendar" size={24} color="#9CA3AF" />
@@ -86,16 +98,16 @@ export default function HomeScreen() {
         <Ionicons name="document-text" size={24} color="#9CA3AF" />
         <Ionicons name="people" size={24} color="#9CA3AF" />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAFAFF' },
+  container: { flex: 1, backgroundColor: '#FAFAFF', paddingTop: 40 },
   scrollArea: { padding: 25, paddingBottom: 120 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 },
   userInfo: { flexDirection: 'row', alignItems: 'center' },
-  avatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#DDD', marginRight: 15 },
+  avatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#0EA5E9', marginRight: 15 },
   helloText: { color: '#6B7280', fontSize: 14 },
   nameText: { fontSize: 20, fontWeight: 'bold', color: '#1F2937' },
   banner: { backgroundColor: '#4F46E5', borderRadius: 30, padding: 25, flexDirection: 'row', alignItems: 'center', marginBottom: 35 },
@@ -105,8 +117,10 @@ const styles = StyleSheet.create({
   progressRing: { width: 80, height: 80, borderRadius: 40, borderWidth: 5, borderColor: '#818CF8', justifyContent: 'center', alignItems: 'center' },
   innerCircle: { width: 65, height: 65, borderRadius: 32.5, borderLeftWidth: 5, borderColor: '#FFF', justifyContent: 'center', alignItems: 'center', transform: [{rotate: '45deg'}] },
   progressVal: { color: '#FFF', fontWeight: 'bold', fontSize: 16, transform: [{rotate: '-45deg'}] },
-  sectionTitle: { fontSize: 22, fontWeight: 'bold', color: '#111827', marginBottom: 20 },
-  count: { color: '#8B5CF6', fontSize: 16 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
+  sectionTitle: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
+  badge: { backgroundColor: '#F3F4F6', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 10 },
+  badgeText: { color: '#8B5CF6', fontWeight: 'bold', fontSize: 12 },
   hList: { overflow: 'visible', marginBottom: 35 },
   cardH: { width: 240, backgroundColor: '#EEF2FF', borderRadius: 25, padding: 20, marginRight: 15 },
   tag: { color: '#6B7280', fontSize: 12, marginBottom: 8 },
