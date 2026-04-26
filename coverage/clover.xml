@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1777211429288" clover="3.2.0">
-  <project timestamp="1777211429288" name="All files">
-    <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0" elements="13" coveredelements="0" complexity="0" loc="9" ncloc="9" packages="1" files="2" classes="2"/>
+<coverage generated="1777216122731" clover="3.2.0">
+  <project timestamp="1777216122731" name="All files">
+    <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4" elements="13" coveredelements="13" complexity="0" loc="9" ncloc="9" packages="1" files="2" classes="2"/>
     <file name="HomeScreen.tsx" path="C:\Users\PC\Desktop\btl mobile\assignment-mobile\screens\HomeScreen.tsx">
-      <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
-      <line num="6" count="0" type="stmt"/>
-      <line num="8" count="0" type="stmt"/>
-      <line num="31" count="0" type="stmt"/>
-      <line num="105" count="0" type="stmt"/>
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <line num="6" count="4" type="stmt"/>
+      <line num="8" count="4" type="stmt"/>
+      <line num="31" count="1" type="stmt"/>
+      <line num="105" count="1" type="stmt"/>
     </file>
     <file name="OnboardingScreen.tsx" path="C:\Users\PC\Desktop\btl mobile\assignment-mobile\screens\OnboardingScreen.tsx">
-      <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
-      <line num="5" count="0" type="stmt"/>
-      <line num="6" count="0" type="stmt"/>
-      <line num="8" count="0" type="stmt"/>
-      <line num="47" count="0" type="stmt"/>
-      <line num="62" count="0" type="stmt"/>
+      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <line num="5" count="5" type="stmt"/>
+      <line num="6" count="5" type="stmt"/>
+      <line num="8" count="5" type="stmt"/>
+      <line num="47" count="1" type="stmt"/>
+      <line num="62" count="1" type="stmt"/>
     </file>
   </project>
 </coverage>

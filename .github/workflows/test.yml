@@ -1,18 +1,32 @@
 name: Test & Sonar Scan
 on: [push, pull_request]
+
 jobs:
-  test:
+  test-and-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      # 1. Lấy code về (bắt buộc fetch-depth: 0 để Sonar phân tích lịch sử Git)
+      - name: Checkout Code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+
+      # 2. Cài đặt môi trường Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install --legacy-peer-deps
-      - run: npm run test
-      - name: Sonar Scan
+
+      # 3. Cài đặt thư viện
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      # 4. Chạy Test và sinh ra file coverage (Thư mục coverage/lcov.info)
+      - name: Run Tests with Coverage
+        run: npm run test
+
+      # 5. Gửi báo cáo lên SonarCloud
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

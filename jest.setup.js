@@ -1,11 +1,19 @@
-/* eslint-disable */
+module.exports = {
+  preset: 'jest-expo',
+  testEnvironment: 'jsdom',
 
-// ĐÂY LÀ DÒNG QUAN TRỌNG NHẤT - BẮT BUỘC DÙNG 'global'
-global.__expo_module_name = 'test';
+  setupFiles: ['<rootDir>/jest.setup.js'],
 
-// Mock Icon để giữ nguyên 100% UI HomeScreen của bạn
-jest.mock('@expo/vector-icons', () => {
-  return {
-    Ionicons: 'View',
-  };
-});
+  collectCoverage: true,
+  collectCoverageFrom: ['screens/**/*.{ts,tsx}'],
+
+  transformIgnorePatterns: [
+    'node_modules/(?!((jest-)?react-native|@react-native|expo(nent)?|@expo(nent)?|expo-modules-core|expo-.*|@react-navigation)/)',
+  ],
+
+  // 🔥 THÊM ĐOẠN NÀY
+  moduleNameMapper: {
+    '^expo/src/winter/runtime.native$': '<rootDir>/__mocks__/emptyMock.js',
+    '^expo/src/winter/installGlobal$': '<rootDir>/__mocks__/emptyMock.js',
+  },
+};

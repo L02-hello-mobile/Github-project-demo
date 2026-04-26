@@ -1,7 +1,32 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+
     "strict": true,
-    "types": ["jest"]
-  }
+    "allowJs": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "noEmit": true, 
+    "types": ["jest", "react"]
+  },
+
+  "include": [
+    "screens",
+    "__tests__",
+    "*.ts",
+    "*.tsx"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "jest.config.js",
+    "jest.setup.js",
+    "coverage",
+    "dist",
+    "build"
+  ]
 }
