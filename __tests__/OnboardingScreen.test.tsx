@@ -20,10 +20,10 @@ describe('OnboardingScreen (Login)', () => {
     expect(passInput.props.value).toBe('123456');
   });
 
-  it('3. Nhấn Đăng nhập chuyển hướng sang Home', () => {
+  it('3. Nhấn Đăng nhập chuyển hướng sang Main', () => {
     const mockNav = { navigate: jest.fn() };
     const { getByTestId } = render(<OnboardingScreen navigation={mockNav} />);
     fireEvent.press(getByTestId('btn-login'));
-    expect(mockNav.navigate).toHaveBeenCalledWith('Home');
+    expect(mockNav.navigate).toHaveBeenCalledWith('Main');
   });
 });

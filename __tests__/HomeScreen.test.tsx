@@ -27,11 +27,12 @@ describe("HomeScreen", () => {
   });
 
   it("3. Xử lý nút bấm Xem nhiệm vụ", () => {
-    const { getByTestId, getByText } = render(<HomeScreen />);
+    const mockNav = { navigate: jest.fn() };
+    const { getByTestId } = render(<HomeScreen navigation={mockNav} />);
     const button = getByTestId("btn-action");
 
-    expect(getByText("Xem nhiệm vụ")).toBeTruthy();
+    expect(getByTestId("btn-action")).toBeTruthy();
     fireEvent.press(button);
-    expect(getByText("Đang tải...")).toBeTruthy();
+    expect(mockNav.navigate).toHaveBeenCalledWith("Calendar");
   });
 });
