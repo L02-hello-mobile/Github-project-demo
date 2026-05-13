@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
+  ImageBackground,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Svg, { Circle } from "react-native-svg";
+import { NotificationIcon, BriefcaseIcon, MapIcon } from "../components/Icons";
 
 function CircularProgress({ percent }: { percent: number }) {
   const size = 90;
@@ -56,132 +58,130 @@ function CircularProgress({ percent }: { percent: number }) {
   );
 }
 
-export default function HomeScreen() {
-  const [taskState, setTaskState] = useState("Xem nhiệm vụ");
-
+export default function HomeScreen({ navigation }: any) {
   return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollArea}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.userInfo}>
-            <View style={styles.avatar} />
-            <View>
-              <Text style={styles.helloText}>Hello!</Text>
-              <Text style={styles.nameText}>Hello Mobile</Text>
-            </View>
-          </View>
-          <Ionicons name="notifications" size={26} color="#1F2937" />
-        </View>
-
-        {/* Banner Tím */}
-        <View style={styles.banner}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.bannerTitle}>
-              Nhiệm vụ của bạn sắp hoàn thành!
-            </Text>
-            <TouchableOpacity
-              testID="btn-action"
-              style={styles.bannerBtn}
-              onPress={() => setTaskState("Đang tải...")}
-            >
-              <Text style={styles.bannerBtnText}>{taskState}</Text>
-            </TouchableOpacity>
-          </View>
-          <CircularProgress percent={85} />
-        </View>
-
-        {/* Đang diễn ra */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Đang diễn ra</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>6</Text>
-          </View>
-        </View>
+    <ImageBackground
+      source={require("../assets/bgSplash.png")}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.hList}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollArea}
         >
-          <View style={styles.cardH}>
-            <Text style={styles.tag}>Job fair</Text>
-            <Text style={styles.cardHTitle}>Hỗ trợ gian hàng số 14</Text>
-            <View style={styles.pBar}>
-              <View style={[styles.pFill, { width: "60%" }]} />
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.userInfo}>
+              <View style={styles.avatar} />
+              <View>
+                <Text style={styles.helloText}>Hello!</Text>
+                <Text style={styles.nameText}>Hello Mobile</Text>
+              </View>
+            </View>
+            <NotificationIcon color="#1F2937" />
+          </View>
+
+          {/* Banner Tím */}
+          <View style={styles.banner}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.bannerTitle}>
+                Nhiệm vụ của bạn sắp hoàn thành!
+              </Text>
+              <TouchableOpacity
+                testID="btn-action"
+                style={styles.bannerBtn}
+                onPress={() => navigation.navigate("Calendar")}
+              >
+                <Text style={styles.bannerBtnText}>Xem nhiệm vụ</Text>
+              </TouchableOpacity>
+            </View>
+            <CircularProgress percent={85} />
+          </View>
+
+          {/* Đang diễn ra */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Đang diễn ra</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>6</Text>
             </View>
           </View>
-          <View style={[styles.cardH, { backgroundColor: "#FFEDD5" }]}>
-            <Text style={styles.tag}>Câu lạc bộ âm nhạc</Text>
-            <Text style={styles.cardHTitle}>Sound check</Text>
-            <View style={styles.pBar}>
-              <View
-                style={[
-                  styles.pFill,
-                  { width: "30%", backgroundColor: "#F97316" },
-                ]}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.hList}
+          >
+            <View style={styles.cardH}>
+              <Text style={styles.tag}>Job fair</Text>
+              <Text style={styles.cardHTitle}>Hỗ trợ gian hàng số 14</Text>
+              <View style={styles.pBar}>
+                <View style={[styles.pFill, { width: "60%" }]} />
+              </View>
+            </View>
+            <View style={[styles.cardH, { backgroundColor: "#FFEDD5" }]}>
+              <Text style={styles.tag}>Câu lạc bộ âm nhạc</Text>
+              <Text style={styles.cardHTitle}>Sound check</Text>
+              <View style={styles.pBar}>
+                <View
+                  style={[
+                    styles.pFill,
+                    { width: "30%", backgroundColor: "#F97316" },
+                  ]}
+                />
+              </View>
+            </View>
+          </ScrollView>
+
+          {/* Sự kiện */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Sự kiện</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>4</Text>
+            </View>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={[styles.iconBox, { backgroundColor: "#FCE7F3" }]}>
+              <BriefcaseIcon color="#DB2777" size={20} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 15 }}>
+              <Text style={styles.eventTitle}>Job fair</Text>
+              <Text style={styles.eventSub}>23 Tasks</Text>
+            </View>
+            <Text style={styles.eventPercent}>70%</Text>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={[styles.iconBox, { backgroundColor: "#E0E7FF" }]}>
+              <MapIcon color="#4F46E5" size={20} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 15 }}>
+              <Text style={styles.eventTitle}>Câu lạc bộ âm nhạc</Text>
+              <Text style={styles.eventSub}>30 Tasks</Text>
+            </View>
+            <Text style={styles.eventPercent}>52%</Text>
+          </View>
+          <View style={styles.eventItem}>
+            <View style={[styles.iconBox, { backgroundColor: "#FFEDD5" }]}>
+              <Image
+                source={require("../assets/book.png")}
+                style={styles.iconImg}
+                tintColor="#F97316"
               />
             </View>
+            <View style={{ flex: 1, marginLeft: 15 }}>
+              <Text style={styles.eventTitle}>Team building</Text>
+              <Text style={styles.eventSub}>30 Tasks</Text>
+            </View>
+            <Text style={styles.eventPercent}>87%</Text>
           </View>
         </ScrollView>
-
-        {/* Sự kiện */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Sự kiện</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>4</Text>
-          </View>
-        </View>
-        <View style={styles.eventItem}>
-          <View style={[styles.iconBox, { backgroundColor: "#FCE7F3" }]}>
-            <Ionicons name="briefcase" size={20} color="#DB2777" />
-          </View>
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.eventTitle}>Job fair</Text>
-            <Text style={styles.eventSub}>23 Tasks</Text>
-          </View>
-          <Text style={styles.eventPercent}>70%</Text>
-        </View>
-        <View style={styles.eventItem}>
-          <View style={[styles.iconBox, { backgroundColor: "#E0E7FF" }]}>
-            <Ionicons name="person" size={20} color="#4F46E5" />
-          </View>
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.eventTitle}>Câu lạc bộ âm nhạc</Text>
-            <Text style={styles.eventSub}>30 Tasks</Text>
-          </View>
-          <Text style={styles.eventPercent}>52%</Text>
-        </View>
-        <View style={styles.eventItem}>
-          <View style={[styles.iconBox, { backgroundColor: "#FFEDD5" }]}>
-            <Ionicons name="book" size={20} color="#F97316" />
-          </View>
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={styles.eventTitle}>Team building</Text>
-            <Text style={styles.eventSub}>30 Tasks</Text>
-          </View>
-          <Text style={styles.eventPercent}>87%</Text>
-        </View>
-      </ScrollView>
-
-      {/* Thanh Menu Dưới */}
-      <View style={styles.bottomTab}>
-        <Ionicons name="home" size={24} color="#6366F1" />
-        <Ionicons name="calendar" size={24} color="#9CA3AF" />
-        <View style={styles.fab}>
-          <Ionicons name="add" size={30} color="#FFF" />
-        </View>
-        <Ionicons name="document-text" size={24} color="#9CA3AF" />
-        <Ionicons name="people" size={24} color="#9CA3AF" />
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFF", paddingTop: 40 },
+  bg: { flex: 1, width: "100%", height: "100%" },
+  container: { flex: 1, paddingTop: 40 },
   scrollArea: { padding: 25, paddingBottom: 120 },
   header: {
     flexDirection: "row",
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   helloText: { color: "#6B7280", fontSize: 14 },
   nameText: { fontSize: 20, fontWeight: "bold", color: "#1F2937" },
   banner: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#5F33E1",
     borderRadius: 30,
     padding: 25,
     flexDirection: "row",
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignSelf: "flex-start",
   },
-  bannerBtnText: { color: "#4F46E5", fontWeight: "bold" },
+  bannerBtnText: { color: "#5F33E1", fontWeight: "bold" },
   progressRing: {
     width: 80,
     height: 80,
@@ -285,9 +285,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 20,
     marginBottom: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.02,
-    elevation: 1,
+    boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.02)",
   },
   iconBox: {
     width: 45,
@@ -296,6 +294,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  iconImg: { width: 20, height: 20 },
   eventTitle: { fontWeight: "bold", fontSize: 16, color: "#1F2937" },
   eventSub: { color: "#9CA3AF", fontSize: 13 },
   eventPercent: {
@@ -305,29 +304,5 @@ const styles = StyleSheet.create({
     borderColor: "#E5E7EB",
     padding: 8,
     borderRadius: 12,
-  },
-  bottomTab: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    height: 85,
-    backgroundColor: "#FFF",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 20,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    elevation: 10,
-  },
-  fab: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#6366F1",
-    marginTop: -50,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
   },
 });
