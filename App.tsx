@@ -7,12 +7,19 @@ import {
   LexendDeca_700Bold,
 } from "@expo-google-fonts/lexend-deca";
 import { View, ActivityIndicator } from "react-native";
-import OnboardingScreen from "./screens/OnboardingScreen";
+
+// --- CÁC MÀN HÌNH FLOW CŨ ---
 import HomeScreen from "./screens/HomeScreen";
 import StartScreen from "./screens/StartScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
 import BottomTab from "./components/BottomTab";
+
+// --- CÁC MÀN HÌNH AUTH MỚI THÊM VÀO ---
+import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignUpScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,9 +58,17 @@ export default function App() {
         initialRouteName="Start"
         screenOptions={{ headerShown: false }}
       >
+        {/* Flow khởi tạo  */}
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+
+        {/* Flow Xác thực (Auth) */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+
+        {/* Màn hình chính sau khi đăng nhập thành công */}
         <Stack.Screen name="Main" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
