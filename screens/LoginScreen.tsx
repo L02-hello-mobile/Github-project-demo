@@ -29,10 +29,10 @@ export default function LoginScreen({ navigation }: any) {
 
             <View style={styles.form}>
               <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.inputUnderline} placeholder="mary.elliot@mail.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+              <TextInput style={styles.inputUnderline} placeholder="   " value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
 
               <Text style={styles.label}>Mật khẩu</Text>
-              <TextInput style={styles.inputUnderline} placeholder="••••••••••••" secureTextEntry value={password} onChangeText={setPassword} />
+              <TextInput style={styles.inputUnderline} placeholder="      " secureTextEntry value={password} onChangeText={setPassword} />
 
               <TouchableOpacity style={styles.forgotBtn} onPress={() => navigation.navigate("ForgotPassword")}>
                 <Text style={styles.forgotText}>Quên mật khẩu?</Text>

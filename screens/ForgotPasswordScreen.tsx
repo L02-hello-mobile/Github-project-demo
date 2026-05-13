@@ -21,7 +21,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
 
             <View style={styles.form}>
               <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.inputBox} placeholder="mary.elliot@mail.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+              <TextInput style={styles.inputBox} placeholder="   " value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
 
               <Text style={styles.helperText}>
                 <Text style={styles.asterisk}>* </Text>

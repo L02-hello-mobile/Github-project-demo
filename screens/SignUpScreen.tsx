@@ -39,13 +39,13 @@ export default function SignUpScreen({ navigation }: any) {
               </View>
 
               <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.inputBox} placeholder="mary.elliot@mail.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+              <TextInput style={styles.inputBox} placeholder="   " value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
 
               <Text style={styles.label}>Mật khẩu</Text>
-              <TextInput style={styles.inputBox} placeholder="••••••••••••" secureTextEntry value={password} onChangeText={setPassword} />
+              <TextInput style={styles.inputBox} placeholder="      " secureTextEntry value={password} onChangeText={setPassword} />
 
               <Text style={styles.label}>Xác nhận mật khẩu</Text>
-              <TextInput style={styles.inputBox} placeholder="••••••••••••" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+              <TextInput style={styles.inputBox} placeholder="      " secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
 
               <TouchableOpacity style={styles.primaryBtn} onPress={handleSignUp}>
                 <Text style={styles.primaryBtnText}>Đăng ký</Text>

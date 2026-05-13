@@ -21,6 +21,11 @@ import SignUpScreen from "./screens/SignUpScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
+// --- CÁC MÀN HÌNH CHI TIẾT MỚI THÊM VÀO ---
+import EventDetailScreen from "./screens/EventDetailScreen";
+import NotificationScreen from "./screens/NotificationScreen";
+import AccountScreen from "./screens/AccountScreen";
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -70,6 +75,11 @@ export default function App() {
 
         {/* Màn hình chính sau khi đăng nhập thành công */}
         <Stack.Screen name="Main" component={MainTabs} />
+
+        {/* Các màn hình chi tiết mới khai báo */}
+        <Stack.Screen name="EventDetail" component={EventDetailScreen} />
+        <Stack.Screen name="Notification" component={NotificationScreen} />
+        <Stack.Screen name="Account" component={AccountScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
