@@ -173,7 +173,9 @@ export default function TodayTask({ navigation }: any) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation?.goBack()}>
-            <ArrowIcon color="#1F2937" size={22} />
+            <View style={{ transform: [{ scaleX: -1 }] }}>
+              <ArrowIcon color="#1F2937" size={22} />
+            </View>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Nhiệm vụ hôm nay</Text>
           <NotificationIcon color="#1F2937" />
@@ -201,6 +203,7 @@ export default function TodayTask({ navigation }: any) {
             // Snap so 5 days are visible and selected is centered
             snapToInterval={ITEM_WIDTH}
             decelerationRate="fast"
+            fadingEdgeLength={3}
           />
 
           {/* Filter tabs */}
@@ -209,6 +212,7 @@ export default function TodayTask({ navigation }: any) {
             showsHorizontalScrollIndicator={false}
             style={styles.filterRow}
             contentContainerStyle={{ gap: 10, paddingVertical: 4 }}
+            fadingEdgeLength={3}
           >
             {FILTERS.map((f) => (
               <TouchableOpacity

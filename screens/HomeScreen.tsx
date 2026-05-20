@@ -79,7 +79,12 @@ export default function HomeScreen({ navigation }: any) {
                 <Text style={styles.nameText}>Hello Mobile</Text>
               </View>
             </View>
-            <NotificationIcon color="#1F2937" />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Notification")}
+              activeOpacity={0.7}
+            >
+              <NotificationIcon color="#1F2937" />
+            </TouchableOpacity>
           </View>
 
           {/* Banner Tím */}
@@ -110,6 +115,9 @@ export default function HomeScreen({ navigation }: any) {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.hList}
+            contentContainerStyle={{ paddingRight: 25 }}
+            nestedScrollEnabled
+            fadingEdgeLength={3}
           >
             <View style={styles.cardH}>
               <Text style={styles.tag}>Job fair</Text>
@@ -261,7 +269,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   badgeText: { color: "#8B5CF6", fontWeight: "bold", fontSize: 12 },
-  hList: { overflow: "visible", marginBottom: 35 },
+  hList: { marginBottom: 35 },
   cardH: {
     width: 240,
     backgroundColor: "#EEF2FF",

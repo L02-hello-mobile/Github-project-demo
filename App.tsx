@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -8,12 +8,23 @@ import {
 } from "@expo-google-fonts/lexend-deca";
 import React, { useRef, useEffect } from "react";
 import { View, ActivityIndicator, Animated } from "react-native";
+
+const AppTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "transparent",
+    card: "transparent",
+    border: "transparent",
+  },
+};
 import { useIsFocused } from "@react-navigation/native";
 import OnboardingScreen from "./screens/OnboardingScreen";
 import HomeScreen from "./screens/HomeScreen";
 import StartScreen from "./screens/StartScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
+import NotificationScreen from "./screens/NotificationScreen";
 import BottomTab from "./components/BottomTab";
 
 const Stack = createNativeStackNavigator();
@@ -67,7 +78,17 @@ function MainTabs() {
   return (
     <Tab.Navigator
       tabBar={(props) => <BottomTab {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          position: "absolute",
+          backgroundColor: "transparent",
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+      }}
+      sceneContainerStyle={{ backgroundColor: "transparent" }}
     >
       <Tab.Screen name="Home" component={FadeHome} />
       <Tab.Screen name="Calendar" component={FadeCalendar} />
@@ -92,7 +113,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={AppTheme}>
       <Stack.Navigator
         initialRouteName="Start"
         screenOptions={{
@@ -105,6 +126,7 @@ export default function App() {
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="Notification" component={NotificationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
