@@ -202,8 +202,7 @@ export default function MapEditorScreen() {
       </Pressable>
 
       <Text style={styles.hint}>
-        Tap để thêm • Kéo để di chuyển •
-        Giữ để xoá
+        Tap để thêm • Nhấn giữ để xóa
       </Text>
 
       <TouchableOpacity style={styles.confirmButton} onPress={() => alert("Vị trí đã được xác nhận") }>
@@ -223,8 +222,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#24252C",
+    fontFamily: "LexendDeca_700Bold",
+    color: "#1F2937",
   },
   header: {
     flexDirection: "row",

@@ -23,12 +23,13 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import HomeScreen from "./screens/HomeScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
-import EventsTasks_Org from "./screens/EventsTasks_Org";
+import EventsTasks_Org from "./screens/EventsTasks";
 
 import NotificationScreen from "./screens/NotificationScreen";
 import BottomTab from "./components/BottomTab";
 import TaskDetailScreen from "./screens/TaskDetail_Org";
-import MapEditorScreen from "./screens/AddLocation";
+import MapEditorScreen from "./screens/AddLocation_Org";
+import MembersScreen from "./screens/EventsMembersList";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -127,12 +128,14 @@ export default function App() {
       >
         {/* Để test hoặc chạy luồng luân phiên, bạn có thể hướng initialRoute vào Main */}
         <Stack.Screen name="Start" component={EventsTasks_Org} />
+        {/* <Stack.Screen name="Start" component={TodayTask} /> */}
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
         
         {/* 2. ĐƯA TASK DETAIL RA ĐÂY: Để mọi màn hình (kể cả Start hay MainTabs) đều gọi được */}
         <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
+        <Stack.Screen name="Members" component={MembersScreen} />
         <Stack.Screen name="MapEditor" component={MapEditorScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
       </Stack.Navigator>
