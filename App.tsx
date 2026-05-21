@@ -12,6 +12,7 @@ import HomeScreen from "./screens/HomeScreen";
 import StartScreen from "./screens/StartScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
+import CreateEvent from "./screens/CreateEvent";
 import BottomTab from "./components/BottomTab";
 
 const Stack = createNativeStackNavigator();
@@ -55,6 +56,7 @@ export default function App() {
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="CreateEvent" component={CreateEvent} />
       </Stack.Navigator>
     </NavigationContainer>
   );

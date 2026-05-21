@@ -21,6 +21,7 @@ export default function BottomTab({ state, navigation }: any) {
                 key="Add"
                 style={styles.fab}
                 activeOpacity={0.8}
+                onPress={() => navigation.getParent?.()?.navigate("CreateEvent")}
               >
                 <Image
                   source={tab.icon}
