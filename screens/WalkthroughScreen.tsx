@@ -47,12 +47,14 @@ export default function WalkthroughScreen({ navigation }: any) {
         animated: true,
       });
     } else {
-      navigation.replace("Onboarding");
+      // Đã sửa: Trỏ về màn hình Login thay vì Onboarding
+      navigation.replace("Login");
     }
   };
 
   const handleSkip = () => {
-    navigation.replace("Onboarding");
+    // Đã sửa: Trỏ về màn hình Login
+    navigation.replace("Login");
   };
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {

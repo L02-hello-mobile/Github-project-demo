@@ -39,7 +39,7 @@ export default function OnboardingScreen({ navigation }: any) {
             <TextInput
               testID="input-email"
               style={styles.input}
-              placeholder="mary.elliot@mail.com"
+              placeholder="   "
               value={email}
               onChangeText={setEmail}
             />
@@ -48,7 +48,7 @@ export default function OnboardingScreen({ navigation }: any) {
             <TextInput
               testID="input-password"
               style={styles.input}
-              placeholder="••••••••••••"
+              placeholder="      "
               secureTextEntry
               value={password}
               onChangeText={setPassword}

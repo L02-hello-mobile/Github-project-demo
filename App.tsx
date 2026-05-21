@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -6,9 +7,11 @@ import {
   LexendDeca_400Regular,
   LexendDeca_700Bold,
 } from "@expo-google-fonts/lexend-deca";
-import React, { useRef, useEffect } from "react";
 import { View, ActivityIndicator, Animated } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// --- THEME TRONG SUỐT TỪ NHÁNH MAIN ---
 const AppTheme = {
   ...DefaultTheme,
   colors: {
@@ -18,8 +21,8 @@ const AppTheme = {
     border: "transparent",
   },
 };
-import { useIsFocused } from "@react-navigation/native";
-import OnboardingScreen from "./screens/OnboardingScreen";
+
+// --- CÁC MÀN HÌNH TỪ NHÁNH MAIN VÀ HEAD ---
 import HomeScreen from "./screens/HomeScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
@@ -34,6 +37,7 @@ import MembersScreen from "./screens/EventsMembersList";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// --- HOC: HIỆU ỨNG ANIMATION TỪ NHÁNH MAIN ---
 function withSlide<T extends object>(Component: React.ComponentType<T>) {
   return function SlideScreen(props: T) {
     const isFocused = useIsFocused();
@@ -42,7 +46,6 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
 
     useEffect(() => {
       if (isFocused) {
-        // Màn hình mới: slide từ phải vào + fade in
         translateX.setValue(60);
         opacity.setValue(0);
         Animated.parallel([
@@ -58,7 +61,6 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
           }),
         ]).start();
       } else {
-        // Màn hình cũ: fade out
         Animated.timing(opacity, {
           toValue: 0,
           duration: 160,
@@ -77,6 +79,7 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
 
 const FadeHome = withSlide(HomeScreen);
 const FadeCalendar = withSlide(TodayTask);
+// Nếu muốn các màn hình Org vào Tab, có thể tạo thêm FadeEventsTasksOrg = withSlide(EventsTasks_Org)
 
 function MainTabs() {
   return (
@@ -96,6 +99,7 @@ function MainTabs() {
     >
       <Tab.Screen name="Home" component={FadeHome} />
       <Tab.Screen name="Calendar" component={FadeCalendar} />
+      {/* Tạm thời dùng FadeHome cho Documents và Profile, bạn có thể thay thế bằng component thật sau */}
       <Tab.Screen name="Documents" component={FadeHome} />
       <Tab.Screen name="Profile" component={FadeHome} />
     </Tab.Navigator>
@@ -108,7 +112,25 @@ export default function App() {
     LexendDeca_700Bold,
   });
 
-  if (!fontsLoaded) {
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          setInitialRoute("Main");
+        } else {
+          setInitialRoute("Start");
+        }
+      } catch (error) {
+        setInitialRoute("Start");
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  if (!fontsLoaded || initialRoute === null) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#5F33E1" />
@@ -119,25 +141,36 @@ export default function App() {
   return (
     <NavigationContainer theme={AppTheme}>
       <Stack.Navigator
-        initialRouteName="Start"
+        initialRouteName={initialRoute}
         screenOptions={{
           headerShown: false,
           animation: "slide_from_right",
           animationDuration: 280,
         }}
       >
-        {/* Để test hoặc chạy luồng luân phiên, bạn có thể hướng initialRoute vào Main */}
-        <Stack.Screen name="Start" component={EventsTasks_Org} />
-        {/* <Stack.Screen name="Start" component={TodayTask} /> */}
+        {/* Flow khởi tạo */}
+        <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+
+        {/* Flow Xác thực (Auth) */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+
+        {/* Màn hình chính sau khi đăng nhập thành công */}
         <Stack.Screen name="Main" component={MainTabs} />
+
+        {/* Các màn hình chi tiết & Organizer (Gộp từ 2 nhánh) */}
+        <Stack.Screen name="EventDetail" component={EventDetailScreen} />
+        <Stack.Screen name="Notification" component={NotificationScreen} />
+        <Stack.Screen name="Account" component={AccountScreen} />
         
-        {/* 2. ĐƯA TASK DETAIL RA ĐÂY: Để mọi màn hình (kể cả Start hay MainTabs) đều gọi được */}
+        {/* Màn hình từ nhánh main */}
+        <Stack.Screen name="EventsTasksOrg" component={EventsTasks_Org} />
         <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
         <Stack.Screen name="Members" component={MembersScreen} />
         <Stack.Screen name="MapEditor" component={MapEditorScreen} />
-        <Stack.Screen name="Notification" component={NotificationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
