@@ -46,7 +46,6 @@ export default function WalkthroughScreen({ navigation }: any) {
         offset: next * width,
         animated: true,
       });
-      setIndex(next);
     } else {
       navigation.replace("Onboarding");
     }

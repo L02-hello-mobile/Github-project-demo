@@ -9,6 +9,7 @@ import {
   ImageBackground,
 } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import { NotificationIcon, BriefcaseIcon, MapIcon } from "../components/Icons";
 
 function CircularProgress({ percent }: { percent: number }) {
   const size = 90;
@@ -78,11 +79,12 @@ export default function HomeScreen({ navigation }: any) {
                 <Text style={styles.nameText}>Hello Mobile</Text>
               </View>
             </View>
-            <Image
-              source={require("../assets/notification.png")}
-              style={styles.iconImg}
-              tintColor="#1F2937"
-            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Notification")}
+              activeOpacity={0.7}
+            >
+              <NotificationIcon color="#1F2937" />
+            </TouchableOpacity>
           </View>
 
           {/* Banner Tím */}
@@ -113,6 +115,9 @@ export default function HomeScreen({ navigation }: any) {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.hList}
+            contentContainerStyle={{ paddingRight: 25 }}
+            nestedScrollEnabled
+            fadingEdgeLength={3}
           >
             <View style={styles.cardH}>
               <Text style={styles.tag}>Job fair</Text>
@@ -144,11 +149,7 @@ export default function HomeScreen({ navigation }: any) {
           </View>
           <View style={styles.eventItem}>
             <View style={[styles.iconBox, { backgroundColor: "#FCE7F3" }]}>
-              <Image
-                source={require("../assets/briefcase.png")}
-                style={styles.iconImg}
-                tintColor="#DB2777"
-              />
+              <BriefcaseIcon color="#DB2777" size={20} />
             </View>
             <View style={{ flex: 1, marginLeft: 15 }}>
               <Text style={styles.eventTitle}>Job fair</Text>
@@ -158,11 +159,7 @@ export default function HomeScreen({ navigation }: any) {
           </View>
           <View style={styles.eventItem}>
             <View style={[styles.iconBox, { backgroundColor: "#E0E7FF" }]}>
-              <Image
-                source={require("../assets/profile-2user.png")}
-                style={styles.iconImg}
-                tintColor="#4F46E5"
-              />
+              <MapIcon color="#4F46E5" size={20} />
             </View>
             <View style={{ flex: 1, marginLeft: 15 }}>
               <Text style={styles.eventTitle}>Câu lạc bộ âm nhạc</Text>
@@ -272,7 +269,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   badgeText: { color: "#8B5CF6", fontWeight: "bold", fontSize: 12 },
-  hList: { overflow: "visible", marginBottom: 35 },
+  hList: { marginBottom: 35 },
   cardH: {
     width: 240,
     backgroundColor: "#EEF2FF",
