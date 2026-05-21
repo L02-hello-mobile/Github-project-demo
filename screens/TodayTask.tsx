@@ -1,17 +1,23 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   ImageBackground,
   Animated,
   Dimensions,
   FlatList,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import {
+  ArrowIcon,
+  CalendarIcon,
+  BriefcaseIcon,
+  MapIcon,
+  NotificationIcon,
+} from "../components/Icons";
 
 // Generate 61 days: 30 before today, today, 30 after
 const generateDays = () => {
@@ -62,7 +68,7 @@ const TASKS = [
     status: "Done",
     statusColor: "#6366F1",
     statusBg: "#EEF2FF",
-    icon: require("../assets/briefcase.png"),
+    IconComponent: BriefcaseIcon,
     iconBg: "#EEF2FF",
     iconTint: "#6366F1",
   },
@@ -73,7 +79,7 @@ const TASKS = [
     status: "In Progress",
     statusColor: "#F97316",
     statusBg: "#FFEDD5",
-    icon: require("../assets/profile-2user.png"),
+    IconComponent: MapIcon,
     iconBg: "#FFEDD5",
     iconTint: "#F97316",
   },
@@ -84,13 +90,14 @@ const TASKS = [
     status: "To-do",
     statusColor: "#8B5CF6",
     statusBg: "#F5F3FF",
-    icon: require("../assets/briefcase.png"),
+    IconComponent: BriefcaseIcon,
     iconBg: "#F5F3FF",
     iconTint: "#8B5CF6",
   },
 ];
 
 export default function TodayTask({ navigation }: any) {
+  const isFocused = useIsFocused();
   const [selectedIndex, setSelectedIndex] = useState(TODAY_INDEX);
   const [activeFilter, setActiveFilter] = useState("Tất cả");
   const slideAnim = useRef(
@@ -98,7 +105,6 @@ export default function TodayTask({ navigation }: any) {
   ).current;
   const flatListRef = useRef<FlatList>(null);
 
-  // Scroll so selected item is centered (2nd of 5 visible = index 2)
   const scrollToIndex = (index: number) => {
     const screenWidth = Dimensions.get("window").width - 48; // paddingHorizontal 24*2
     const offset = index * ITEM_WIDTH - screenWidth / 2 + ITEM_WIDTH / 2;
@@ -108,19 +114,20 @@ export default function TodayTask({ navigation }: any) {
     });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      slideAnim.setValue(Dimensions.get("window").width);
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
-      // Scroll to today on focus
-      setTimeout(() => scrollToIndex(TODAY_INDEX), 350);
-    }, []),
-  );
+  useEffect(() => {
+    if (!isFocused) return;
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    const timer = setTimeout(() => scrollToIndex(TODAY_INDEX), 100);
+    return () => clearTimeout(timer);
+  }, [isFocused]);
 
   const handleSelectDate = (index: number) => {
     setSelectedIndex(index);
@@ -166,18 +173,12 @@ export default function TodayTask({ navigation }: any) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation?.goBack()}>
-            <Image
-              source={require("../assets/Arrow - Left.png")}
-              style={styles.backIcon}
-              tintColor="#1F2937"
-            />
+            <View style={{ transform: [{ scaleX: -1 }] }}>
+              <ArrowIcon color="#1F2937" size={22} />
+            </View>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Nhiệm vụ hôm nay</Text>
-          <Image
-            source={require("../assets/notification.png")}
-            style={styles.notifIcon}
-            tintColor="#1F2937"
-          />
+          <NotificationIcon color="#1F2937" />
         </View>
 
         <ScrollView
@@ -199,10 +200,10 @@ export default function TodayTask({ navigation }: any) {
               offset: ITEM_WIDTH * index,
               index,
             })}
-            initialScrollIndex={TODAY_INDEX}
             // Snap so 5 days are visible and selected is centered
             snapToInterval={ITEM_WIDTH}
             decelerationRate="fast"
+            fadingEdgeLength={3}
           />
 
           {/* Filter tabs */}
@@ -211,6 +212,7 @@ export default function TodayTask({ navigation }: any) {
             showsHorizontalScrollIndicator={false}
             style={styles.filterRow}
             contentContainerStyle={{ gap: 10, paddingVertical: 4 }}
+            fadingEdgeLength={3}
           >
             {FILTERS.map((f) => (
               <TouchableOpacity
@@ -241,21 +243,13 @@ export default function TodayTask({ navigation }: any) {
                 <View
                   style={[styles.taskIconBox, { backgroundColor: task.iconBg }]}
                 >
-                  <Image
-                    source={task.icon}
-                    style={styles.taskIcon}
-                    tintColor={task.iconTint}
-                  />
+                  <task.IconComponent color={task.iconTint} size={16} />
                 </View>
               </View>
               <Text style={styles.taskTitle}>{task.title}</Text>
               <View style={styles.taskBottom}>
                 <View style={styles.taskTimeRow}>
-                  <Image
-                    source={require("../assets/calendar.png")}
-                    style={styles.clockIcon}
-                    tintColor="#9CA3AF"
-                  />
+                  <CalendarIcon color="#9CA3AF" size={14} />
                   <Text style={styles.taskTime}>{task.time}</Text>
                 </View>
                 <View

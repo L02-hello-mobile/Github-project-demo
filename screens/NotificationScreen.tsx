@@ -1,71 +1,134 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
+  SafeAreaView,
+} from "react-native";
+import { ArrowIcon } from "../components/Icons";
+
+const notifications = [
+  {
+    id: 1,
+    time: "14:08",
+    message: "Task ID WRK-004568 status has been updated to In-progress.",
+    bubble: true,
+  },
+  {
+    id: 2,
+    time: "14:05",
+    message: "Task ID WRK-004568 has been assigned to you.",
+    bubble: true,
+  },
+  {
+    id: 3,
+    time: "08/01/2025, 11:34",
+    message: "Asset ID V-0260714 has been created successfully.",
+    bubble: true,
+  },
+];
 
 export default function NotificationScreen({ navigation }: any) {
-  // Dữ liệu đã loại bỏ thuộc tính 'type' gây chia tách giao diện
-  const notis = [
-    { id: 1, text: "You have received a new message from the Operation Centre.", time: "15:22" },
-    { id: 2, text: "You have received a new message from the Operation Centre.", time: "15:22" },
-    { id: 3, text: "You have received a new message from Jeanette Barker.", time: "14:09" },
-    { id: 4, text: "Task ID WRK-004568 status has been updated to In-progress.", time: "14:08" },
-    { id: 5, text: "Task ID WRK-004568 has been assigned to you.", time: "14:05" },
-    { id: 6, text: "Asset ID V-0260714 has been created successfully.", time: "08/01/2025, 11:34" },
-  ];
-
   return (
-    <ImageBackground source={require("../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backTxt}>{"<-"}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Thông báo</Text>
-        <View style={styles.backBtn} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {notis.map((item) => (
-          <View key={item.id} style={styles.itemWrapper}>
-            <Text style={styles.timeTxt}>{item.time}</Text>
-            <View style={styles.bubble}>
-              <Text style={styles.msgTxt}>{item.text}</Text>
+    <ImageBackground
+      source={require("../assets/bgSplash.png")}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safe}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <View style={{ transform: [{ scaleX: -1 }] }}>
+              <ArrowIcon color="#1F2937" size={22} />
             </View>
-          </View>
-        ))}
-      </ScrollView>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Thông báo</Text>
+          <View style={styles.backBtn} />
+        </View>
+
+        {/* List */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+        >
+          {notifications.map((item) => (
+            <View key={item.id} style={styles.notifRow}>
+              <Text style={styles.timeText}>{item.time}</Text>
+              {item.bubble ? (
+                <View style={styles.bubbleBox}>
+                  <Text style={styles.bubbleText}>{item.message}</Text>
+                </View>
+              ) : (
+                <Text style={styles.plainText}>{item.message}</Text>
+              )}
+            </View>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1, backgroundColor: "#FFFFFF" },
-  header: { 
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    paddingTop: 50, 
-    paddingHorizontal: 20, 
-    paddingBottom: 10 
+  bg: { flex: 1, width: "100%", height: "100%" },
+  safe: { flex: 1, paddingTop: 20 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
-  backBtn: { width: 40, height: 40, justifyContent: "center" },
-  backTxt: { fontSize: 20, fontWeight: "bold", color: "#1F2937" },
-  headerTitle: { fontSize: 18, fontWeight: "bold", color: "#1F2937" },
-  content: { padding: 20 },
-  itemWrapper: { marginBottom: 15 },
-  timeTxt: { 
-    fontSize: 10, 
-    color: "#9CA3AF", 
-    textAlign: "right", 
+  backBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1F2937",
+  },
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    gap: 4,
+  },
+  notifRow: {
     marginBottom: 4,
-    marginRight: 4 
   },
-  bubble: { 
-    padding: 15, 
-    borderRadius: 12, 
-    backgroundColor: "#F3F4F6", // Màu xám đồng nhất cho tất cả các thẻ
+  timeText: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    textAlign: "right",
+    marginBottom: 4,
   },
-  msgTxt: { 
-    fontSize: 14, 
-    color: "#1F2937", 
-    lineHeight: 20 
+  bubbleBox: {
+    backgroundColor: "#F3F4F6",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 8,
+  },
+  bubbleText: {
+    fontSize: 14,
+    color: "#374151",
+    lineHeight: 20,
+  },
+  plainText: {
+    fontSize: 14,
+    color: "#374151",
+    lineHeight: 20,
+    paddingHorizontal: 4,
+    marginBottom: 8,
   },
 });

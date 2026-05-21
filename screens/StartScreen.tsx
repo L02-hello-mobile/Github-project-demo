@@ -8,6 +8,7 @@ import {
   Dimensions,
   ImageBackground,
 } from "react-native";
+import { ArrowIcon } from "../components/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -43,11 +44,7 @@ export default function StartScreen({ navigation }: any) {
           activeOpacity={0.85}
         >
           <Text style={styles.buttonText}>Khám Phá</Text>
-          <Image
-            source={require("../assets/Arrow - Left.png")}
-            style={styles.buttonArrowIcon}
-            tintColor="#FFFFFF"
-          />
+          <ArrowIcon color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </ImageBackground>

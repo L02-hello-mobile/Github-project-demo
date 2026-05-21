@@ -9,6 +9,7 @@ import {
   ImageBackground,
 } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import { NotificationIcon, BriefcaseIcon, MapIcon } from "../components/Icons";
 
 function CircularProgress({ percent }: { percent: number }) {
   const size = 90;
@@ -43,7 +44,7 @@ export default function HomeScreen({ navigation }: any) {
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea} keyboardShouldPersistTaps="handled">
           
-          {/* Header - Giữ nguyên link Account và Notification */}
+          {/* Header */}
           <View style={styles.header}>
             <View style={styles.userInfo}>
               <TouchableOpacity onPress={() => navigation.navigate("Account")}>
@@ -54,8 +55,11 @@ export default function HomeScreen({ navigation }: any) {
                 <Text style={styles.nameText}>Hello Mobile</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
-              <Image source={require("../assets/notification.png")} style={styles.iconImg} tintColor="#1F2937" />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Notification")}
+              activeOpacity={0.7}
+            >
+              <NotificationIcon color="#1F2937" />
             </TouchableOpacity>
           </View>
 
@@ -76,8 +80,15 @@ export default function HomeScreen({ navigation }: any) {
             <View style={styles.badge}><Text style={styles.badgeText}>6</Text></View>
           </View>
           
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
-            {/* LINK MỚI: Thẻ Job Fair trong ảnh image_e64464.png */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.hList}
+            contentContainerStyle={{ paddingRight: 25 }}
+            nestedScrollEnabled
+            fadingEdgeLength={3}
+          >
+            {/* LINK MỚI: Thẻ Job Fair có onPress */}
             <TouchableOpacity 
               style={styles.cardH} 
               onPress={() => navigation.navigate("EventDetail")}
@@ -108,7 +119,7 @@ export default function HomeScreen({ navigation }: any) {
 
           <TouchableOpacity style={styles.eventItem} onPress={() => navigation.navigate("EventDetail")}>
             <View style={[styles.iconBox, { backgroundColor: "#FCE7F3" }]}>
-              <Image source={require("../assets/briefcase.png")} style={styles.iconImg} tintColor="#DB2777" />
+              <BriefcaseIcon color="#DB2777" size={20} />
             </View>
             <View style={{ flex: 1, marginLeft: 15 }}>
               <Text style={styles.eventTitle}>Job fair</Text>
@@ -119,7 +130,7 @@ export default function HomeScreen({ navigation }: any) {
 
           <View style={styles.eventItem}>
             <View style={[styles.iconBox, { backgroundColor: "#E0E7FF" }]}>
-              <Image source={require("../assets/profile-2user.png")} style={styles.iconImg} tintColor="#4F46E5" />
+              <MapIcon color="#4F46E5" size={20} />
             </View>
             <View style={{ flex: 1, marginLeft: 15 }}>
               <Text style={styles.eventTitle}>Câu lạc bộ âm nhạc</Text>
@@ -163,7 +174,13 @@ const styles = StyleSheet.create({
   badge: { backgroundColor: "#F3F4F6", borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 10 },
   badgeText: { color: "#8B5CF6", fontWeight: "bold", fontSize: 12 },
   hList: { overflow: "visible", marginBottom: 35 },
-  cardH: { width: 240, backgroundColor: "#EEF2FF", borderRadius: 25, padding: 20, marginRight: 15 },
+  cardH: {
+    width: 240,
+    backgroundColor: "#EEF2FF",
+    borderRadius: 25,
+    padding: 20,
+    marginRight: 15,
+  },
   tag: { color: "#6B7280", fontSize: 12, marginBottom: 8 },
   cardHTitle: { fontSize: 17, fontWeight: "bold", color: "#1F2937", marginBottom: 25 },
   pBar: { height: 6, backgroundColor: "#E5E7EB", borderRadius: 3 },
