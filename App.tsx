@@ -22,12 +22,15 @@ const AppTheme = {
   },
 };
 
-// --- CÁC MÀN HÌNH FLOW CŨ ---
+// --- CÁC MÀN HÌNH TỪ NHÁNH MAIN VÀ HEAD ---
 import HomeScreen from "./screens/HomeScreen";
-import StartScreen from "./screens/StartScreen";
 import WalkthroughScreen from "./screens/WalkthroughScreen";
 import TodayTask from "./screens/TodayTask";
+import EventsTasks_Org from "./screens/EventsTasks_Org";
 import BottomTab from "./components/BottomTab";
+import TaskDetailScreen from "./screens/TaskDetail_Org";
+import MapEditorScreen from "./screens/AddLocation";
+import StartScreen from "./screens/StartScreen"; // Đừng quên import StartScreen
 
 // --- CÁC MÀN HÌNH AUTH ---
 import LoginScreen from "./screens/LoginScreen";
@@ -52,7 +55,6 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
 
     useEffect(() => {
       if (isFocused) {
-        // Màn hình mới: slide từ phải vào + fade in
         translateX.setValue(60);
         opacity.setValue(0);
         Animated.parallel([
@@ -68,7 +70,6 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
           }),
         ]).start();
       } else {
-        // Màn hình cũ: fade out
         Animated.timing(opacity, {
           toValue: 0,
           duration: 160,
@@ -87,6 +88,7 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
 
 const FadeHome = withSlide(HomeScreen);
 const FadeCalendar = withSlide(TodayTask);
+// Nếu muốn các màn hình Org vào Tab, có thể tạo thêm FadeEventsTasksOrg = withSlide(EventsTasks_Org)
 
 function MainTabs() {
   return (
@@ -106,6 +108,7 @@ function MainTabs() {
     >
       <Tab.Screen name="Home" component={FadeHome} />
       <Tab.Screen name="Calendar" component={FadeCalendar} />
+      {/* Tạm thời dùng FadeHome cho Documents và Profile, bạn có thể thay thế bằng component thật sau */}
       <Tab.Screen name="Documents" component={FadeHome} />
       <Tab.Screen name="Profile" component={FadeHome} />
     </Tab.Navigator>
@@ -118,7 +121,6 @@ export default function App() {
     LexendDeca_700Bold,
   });
 
-  // State kiểm tra đăng nhập
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
 
   useEffect(() => {
@@ -155,7 +157,7 @@ export default function App() {
           animationDuration: 280,
         }}
       >
-        {/* Flow khởi tạo  */}
+        {/* Flow khởi tạo */}
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
 
@@ -168,10 +170,15 @@ export default function App() {
         {/* Màn hình chính sau khi đăng nhập thành công */}
         <Stack.Screen name="Main" component={MainTabs} />
 
-        {/* Các màn hình chi tiết mới */}
+        {/* Các màn hình chi tiết & Organizer (Gộp từ 2 nhánh) */}
         <Stack.Screen name="EventDetail" component={EventDetailScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
+        
+        {/* Màn hình từ nhánh main */}
+        <Stack.Screen name="EventsTasksOrg" component={EventsTasks_Org} />
+        <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
+        <Stack.Screen name="MapEditor" component={MapEditorScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
