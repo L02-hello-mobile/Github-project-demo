@@ -31,6 +31,7 @@ import BottomTab from "./components/BottomTab";
 import TaskDetailScreen from "./screens/TaskDetail_Org";
 import MapEditorScreen from "./screens/AddLocation";
 import StartScreen from "./screens/StartScreen"; // Đừng quên import StartScreen
+import CreateEvent from "./screens/CreateEvent";
 
 // --- CÁC MÀN HÌNH AUTH ---
 import LoginScreen from "./screens/LoginScreen";
@@ -179,6 +180,7 @@ export default function App() {
         <Stack.Screen name="EventsTasksOrg" component={EventsTasks_Org} />
         <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
         <Stack.Screen name="MapEditor" component={MapEditorScreen} />
+        <Stack.Screen name="CreateEvent" component={CreateEvent} />
       </Stack.Navigator>
     </NavigationContainer>
   );

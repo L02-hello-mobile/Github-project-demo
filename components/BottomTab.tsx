@@ -72,7 +72,11 @@ export default function BottomTab({ state, navigation }: any) {
 
         {/* FAB — center sits at y = FAB_PEEK = tab top edge */}
         <View style={styles.fabWrap}>
-          <TouchableOpacity style={styles.fab} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.fab}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate("CreateEvent")}
+          >
             <AddIcon color="#FFF" />
           </TouchableOpacity>
         </View>
