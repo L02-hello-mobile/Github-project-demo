@@ -9,7 +9,7 @@ import {
   ImageBackground,
 } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { NotificationIcon, BriefcaseIcon, MapIcon } from "../components/Icons";
+import { NotificationIcon, BriefcaseIcon, MapIcon } from "../../components/Icons";
 
 function CircularProgress({ percent }: { percent: number }) {
   const size = 90;
@@ -40,10 +40,10 @@ function CircularProgress({ percent }: { percent: number }) {
 
 export default function HomeScreen({ navigation }: any) {
   return (
-    <ImageBackground source={require("../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
+    <ImageBackground source={require("../../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
       <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea} keyboardShouldPersistTaps="handled">
-          
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollArea} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.userInfo}>
@@ -79,18 +79,17 @@ export default function HomeScreen({ navigation }: any) {
             <Text style={styles.sectionTitle}>Đang diễn ra</Text>
             <View style={styles.badge}><Text style={styles.badgeText}>6</Text></View>
           </View>
-          
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.hList}
             contentContainerStyle={{ paddingRight: 25 }}
             nestedScrollEnabled
-            fadingEdgeLength={3}
           >
             {/* LINK MỚI: Thẻ Job Fair có onPress */}
-            <TouchableOpacity 
-              style={styles.cardH} 
+            <TouchableOpacity
+              style={styles.cardH}
               onPress={() => navigation.navigate("EventDetail")}
               activeOpacity={0.8}
             >
@@ -141,7 +140,7 @@ export default function HomeScreen({ navigation }: any) {
 
           <View style={styles.eventItem}>
             <View style={[styles.iconBox, { backgroundColor: "#FFEDD5" }]}>
-              <Image source={require("../assets/book.png")} style={styles.iconImg} tintColor="#F97316" />
+              <Image source={require("../../assets/book.png")} style={styles.iconImg} tintColor="#F97316" />
             </View>
             <View style={{ flex: 1, marginLeft: 15 }}>
               <Text style={styles.eventTitle}>Team building</Text>
@@ -149,7 +148,7 @@ export default function HomeScreen({ navigation }: any) {
             </View>
             <Text style={styles.eventPercent}>87%</Text>
           </View>
-          
+
         </ScrollView>
       </View>
     </ImageBackground>
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 22, fontWeight: "bold", color: "#111827" },
   badge: { backgroundColor: "#F3F4F6", borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 10 },
   badgeText: { color: "#8B5CF6", fontWeight: "bold", fontSize: 12 },
-  hList: { overflow: "visible", marginBottom: 35 },
+  hList: { marginBottom: 35 },
   cardH: {
     width: 240,
     backgroundColor: "#EEF2FF",

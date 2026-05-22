@@ -12,8 +12,8 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       {/* 1. FIX KEYBOARD: Thêm keyboardShouldPersistTaps="handled" vào ScrollView */}
-      <ScrollView 
-        contentContainerStyle={styles.scrollContainer} 
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }: any) {
             <Text style={styles.title}>Chào mừng trở lại</Text>
 
             <View style={styles.illustrationPlaceholder}>
-              <Image source={require("../assets/welcomeBack.png")} style={styles.welcomeImg} resizeMode="contain" />
+              <Image source={require("../../assets/welcomeBack.png")} style={styles.welcomeImg} resizeMode="contain" />
             </View>
 
             <View style={styles.form}>
@@ -65,14 +65,14 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: "bold", color: "#000000", marginBottom: 30 },
   illustrationPlaceholder: { width: 150, height: 150, marginBottom: 30 },
   welcomeImg: { width: "100%", height: "100%" },
-  
+
   // 2. FIX Z-INDEX: Ép khối form nổi lên trên 2 cái blob absolute
-  form: { 
+  form: {
     width: "100%",
-    zIndex: 10, 
-    elevation: 10 
+    zIndex: 10,
+    elevation: 10
   },
-  
+
   label: { fontSize: 14, fontWeight: "bold", color: "#000000", marginBottom: 8 },
   inputUnderline: { borderBottomWidth: 1, borderBottomColor: "#D1D1D6", paddingVertical: 10, fontSize: 16, marginBottom: 20, color: "#3C3C43" },
   forgotBtn: { alignSelf: "flex-end", marginBottom: 30 },

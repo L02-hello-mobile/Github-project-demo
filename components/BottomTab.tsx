@@ -15,7 +15,7 @@ import {
   MapIcon,
 } from "./Icons";
 
-const TAB_HEIGHT = 68;
+const TAB_HEIGHT = 60;
 const FAB_SIZE = 60;
 const FAB_PEEK = FAB_SIZE / 2; // = 30: FAB center sits at tab top edge
 const CORNER_R = 26;

@@ -17,8 +17,8 @@ import {
 } from "lucide-react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import ArrowIcon from "../components/Icon/LeftArrow";
-import BellIcon from "../components/Icon/Notification";
+import ArrowIcon from "../../components/Icon/LeftArrow";
+import BellIcon from "../../components/Icon/Notification";
 
 const { width } = Dimensions.get("window");
 
@@ -94,10 +94,10 @@ export default function MapEditorScreen() {
       prev.map((marker) =>
         marker.id === id
           ? {
-              ...marker,
-              xPercent,
-              yPercent,
-            }
+            ...marker,
+            xPercent,
+            yPercent,
+          }
           : marker
       )
     );
@@ -206,7 +206,7 @@ export default function MapEditorScreen() {
         Giữ để xoá
       </Text>
 
-      <TouchableOpacity style={styles.confirmButton} onPress={() => alert("Vị trí đã được xác nhận") }>
+      <TouchableOpacity style={styles.confirmButton} onPress={() => alert("Vị trí đã được xác nhận")}>
         <Text style={styles.confirmButtonText}>Xác nhận</Text>
       </TouchableOpacity>
     </View>

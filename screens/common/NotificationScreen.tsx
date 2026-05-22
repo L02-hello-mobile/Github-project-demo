@@ -8,7 +8,7 @@ import {
   ImageBackground,
   SafeAreaView,
 } from "react-native";
-import { ArrowIcon } from "../components/Icons";
+import { ArrowIcon } from "../../components/Icons";
 
 const notifications = [
   {
@@ -34,7 +34,7 @@ const notifications = [
 export default function NotificationScreen({ navigation }: any) {
   return (
     <ImageBackground
-      source={require("../assets/bgSplash.png")}
+      source={require("../../assets/bgSplash.png")}
       style={styles.bg}
       resizeMode="cover"
     >

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import HomeScreen from "../screens/HomeScreen";
+import HomeScreen from "../screens/common/HomeScreen";
 
 jest.mock("@expo/vector-icons", () => ({ Ionicons: "View" }));
 jest.mock("react-native-svg", () => {

@@ -25,8 +25,10 @@ import {
 } from "lucide-react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import ArrowIcon from "../components/Icon/LeftArrow";
-import BellIcon from "../components/Icon/Notification";
+import {
+  ArrowIcon,
+  NotificationIcon,
+} from "../../components/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -94,67 +96,67 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
     <SafeAreaView style={styles.safeArea}>
       {/* 1. Header Bar */}
       <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ArrowIcon size={0.07 * width} color="#24252C" />
-            </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View style={{ transform: [{ scaleX: -1 }] }}>
+            <ArrowIcon color="#1F2937" size={22} />
+          </View>
+        </TouchableOpacity>
 
-            <Text style={styles.title}>
-            Nhiệm vụ của sự kiện
-            </Text>
+        <Text style={styles.title}>
+          Nhiệm vụ của sự kiện
+        </Text>
 
-            <TouchableOpacity onPress={() => alert("Đi tới màn hình thông báo!")}>
-            <BellIcon size={0.07 * width} color="#24252C" hasNotification={true} />
-            </TouchableOpacity>
-        </View>
+        <NotificationIcon color="#1F2937" />
+      </View>
 
       {/* Toàn bộ nội dung cuộn */}
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* 2. Chọn Nhóm (Dropdown) */}
         <TouchableOpacity
-            style={styles.cardRow}
-            onPress={() => setOpenDropdown(!openDropdown)}
+          style={styles.cardRow}
+          onPress={() => setOpenDropdown(!openDropdown)}
         >
-            <View style={[styles.iconContainer, { backgroundColor: "#FFEBF0" }]}>
+          <View style={[styles.iconContainer, { backgroundColor: "#FFEBF0" }]}>
             <CurrentIcon size={20} color="#FF5487" />
-            </View>
+          </View>
 
-            <View style={styles.cardBody}>
+          <View style={styles.cardBody}>
             <Text style={styles.label}>Nhóm</Text>
 
             <Text style={styles.valueText}>{groupLabel}</Text>
-            </View>
+          </View>
 
-            <ChevronDown size={20} color="#1A1D1E" />
+          <ChevronDown size={20} color="#1A1D1E" />
         </TouchableOpacity>
 
-      {/* Options */}
-      {openDropdown && (
-        <View style={styles.dropdownContainer}>
-          {taskOptions.map((item) => {
-            const IconComponent = taskIcons[item.key];
+        {/* Options */}
+        {openDropdown && (
+          <View style={styles.dropdownContainer}>
+            {taskOptions.map((item) => {
+              const IconComponent = taskIcons[item.key];
 
-            return (
-              <TouchableOpacity
-                key={item.key}
-                style={styles.dropdownItem}
-                onPress={() => {
-                  setGroup(item.key);
-                  setOpenDropdown(false);
-                }}
-              >
-                <IconComponent size={18} color="#5F33E1" />
+              return (
+                <TouchableOpacity
+                  key={item.key}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setGroup(item.key);
+                    setOpenDropdown(false);
+                  }}
+                >
+                  <IconComponent size={18} color="#5F33E1" />
 
-                <Text style={styles.dropdownText}>
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      )}
+                  <Text style={styles.dropdownText}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
 
         {/* 3. Tên Nhiệm vụ (Input) */}
         <View style={styles.cardField}>
@@ -431,24 +433,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-    dropdownContainer: {
+  dropdownContainer: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     marginTop: -10,
     marginBottom: 16,
     paddingVertical: 8,
-    },
+  },
 
-    dropdownItem: {
+  dropdownItem: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    },
+  },
 
-    dropdownText: {
+  dropdownText: {
     marginLeft: 12,
     fontSize: 15,
     color: "#1A1D1E",
-    },
+  },
 });
