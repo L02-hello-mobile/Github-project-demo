@@ -27,10 +27,11 @@ import HomeScreen from "./screens/common/HomeScreen";
 import TodayTask from "./screens/staff/TodayTask";
 import EventsTasks_Org from "./screens/organizer/EventsTasks";
 import BottomTab from "./components/BottomTab";
-import TaskDetailScreen from "./screens/organizer/TaskDetail";
+import TaskDetailScreen from "./screens/TaskDetail_Org";
+import MapEditorScreen from "./screens/AddLocation";
+import CreateEvent from "./screens/CreateEvent";
 import TaskDetailStaff from "./screens/staff/TaskDetail";
 import MapViewStaff from "./screens/staff/MapView";
-import MapEditorScreen from "./screens/organizer/AddLocation";
 import MemberList from "./screens/organizer/MemberList";
 import MapList_Staff from "./screens/staff/MapList";
 import SettingScreen from "./screens/common/SettingScreen";
@@ -189,6 +190,7 @@ export default function App() {
         <Stack.Screen name="MapViewStaff" component={MapViewStaff} />
         <Stack.Screen name="MapEditor" component={MapEditorScreen} />
         <Stack.Screen name="MemberList" component={MemberList} />
+        <Stack.Screen name="CreateEvent" component={CreateEvent} />
       </Stack.Navigator>
     </NavigationContainer>
   );
