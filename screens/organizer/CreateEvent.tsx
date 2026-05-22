@@ -22,7 +22,7 @@ import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 declare const require: any;
 
 const bgSplash = require("../assets/bgSplash.png");
-const arrowLeft = require("../assets/Arrow - Left.png");
+const arrowLeft = require("../assets/Arrow-Left.png");
 const trashIcon = require("../assets/trash-outline.png");
 
 type Step = 1 | 2 | 3;

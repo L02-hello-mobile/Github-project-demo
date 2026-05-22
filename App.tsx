@@ -24,16 +24,19 @@ const AppTheme = {
 
 // --- CÁC MÀN HÌNH TỪ NHÁNH MAIN VÀ HEAD ---
 import HomeScreen from "./screens/common/HomeScreen";
-import TodayTask from "./screens/TodayTask";
-import EventsTasks_Org from "./screens/organizer/EventsTasks_Org";
+import TodayTask from "./screens/staff/TodayTask";
+import EventsTasks_Org from "./screens/organizer/EventsTasks";
 import BottomTab from "./components/BottomTab";
-import TaskDetailScreen from "./screens/organizer/TaskDetail_Org";
+import TaskDetailScreen from "./screens/organizer/TaskDetail";
+import TaskDetailStaff from "./screens/staff/TaskDetail";
+import MapViewStaff from "./screens/staff/MapView";
 import MapEditorScreen from "./screens/organizer/AddLocation";
-import StartScreen from "./screens/StartScreen"; // Đừng quên import StartScreen
-import CreateEvent from "./screens/CreateEvent";
+import MemberList from "./screens/organizer/MemberList";
+import MapList_Staff from "./screens/staff/MapList";
+import SettingScreen from "./screens/common/SettingScreen";
+import CreateEvent from "./screens/organizer/CreateEvent";
 
 // --- CÁC MÀN HÌNH AUTH ---
-
 import ForgotPasswordScreen from "./screens/common/ForgotPasswordScreen";
 
 // --- CÁC MÀN HÌNH CHI TIẾT ---
@@ -44,6 +47,7 @@ import LoginScreen from "./screens/common/LoginScreen";
 import NotificationScreen from "./screens/common/NotificationScreen";
 import ResetPasswordScreen from "./screens/common/ResetPasswordScreen";
 import SignUpScreen from "./screens/common/SignUpScreen";
+import StartScreen from "./screens/common/StartScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -90,6 +94,8 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
 
 const FadeHome = withSlide(HomeScreen);
 const FadeCalendar = withSlide(TodayTask);
+const FadeMapList = withSlide(MapList_Staff);
+const FadeSetting = withSlide(SettingScreen);
 // Nếu muốn các màn hình Org vào Tab, có thể tạo thêm FadeEventsTasksOrg = withSlide(EventsTasks_Org)
 
 function MainTabs() {
@@ -110,9 +116,8 @@ function MainTabs() {
     >
       <Tab.Screen name="Home" component={FadeHome} />
       <Tab.Screen name="Calendar" component={FadeCalendar} />
-      {/* Tạm thời dùng FadeHome cho Documents và Profile, bạn có thể thay thế bằng component thật sau */}
-      <Tab.Screen name="Documents" component={FadeHome} />
-      <Tab.Screen name="Profile" component={FadeHome} />
+      <Tab.Screen name="Documents" component={FadeMapList} />
+      <Tab.Screen name="Map" component={FadeSetting} />
     </Tab.Navigator>
   );
 }
@@ -178,10 +183,13 @@ export default function App() {
         <Stack.Screen name="Account" component={AccountScreen} />
 
         {/* Màn hình từ nhánh main */}
-        <Stack.Screen name="EventsTasksOrg" component={EventsTasks_Org} />
+        <Stack.Screen name="EventsTasks_Org" component={EventsTasks_Org} />
         <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
+        <Stack.Screen name="TaskDetailStaff" component={TaskDetailStaff} />
+        <Stack.Screen name="MapViewStaff" component={MapViewStaff} />
         <Stack.Screen name="MapEditor" component={MapEditorScreen} />
         <Stack.Screen name="CreateEvent" component={CreateEvent} />
+        <Stack.Screen name="MemberList" component={MemberList} />
       </Stack.Navigator>
     </NavigationContainer>
   );

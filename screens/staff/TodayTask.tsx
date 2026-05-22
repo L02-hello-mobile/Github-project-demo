@@ -17,7 +17,7 @@ import {
   BriefcaseIcon,
   MapIcon,
   NotificationIcon,
-} from "../components/Icons";
+} from "../../components/Icons";
 
 // Generate 61 days: 30 before today, today, 30 after
 const generateDays = () => {
@@ -64,6 +64,11 @@ const TASKS = [
   {
     category: "Job Fair",
     title: "Kê bàn",
+    group: "Nhóm khu C",
+    description:
+      "Sinh viên tình nguyện thực hiện việc kê bàn theo đúng khu vực quy định, số lượng 100 bàn.",
+    startDate: "01 May, 2026",
+    endDate: "01 May, 2026",
     time: "10:00 AM",
     status: "Done",
     statusColor: "#6366F1",
@@ -75,6 +80,11 @@ const TASKS = [
   {
     category: "Câu lạc bộ âm nhạc",
     title: "Mua nước",
+    group: "Nhóm khu B",
+    description:
+      "Mua nước uống cho toàn bộ thành viên tham gia sự kiện, số lượng 200 chai.",
+    startDate: "01 May, 2026",
+    endDate: "01 May, 2026",
     time: "12:00 PM",
     status: "In Progress",
     statusColor: "#F97316",
@@ -86,6 +96,11 @@ const TASKS = [
   {
     category: "Mùa hè xanh",
     title: "Đi chợ",
+    group: "Nhóm hậu cần",
+    description:
+      "Mua thực phẩm và vật tư cần thiết phục vụ bữa ăn tình nguyện tại địa điểm quy định.",
+    startDate: "01 May, 2026",
+    endDate: "02 May, 2026",
     time: "07:00 PM",
     status: "To-do",
     statusColor: "#8B5CF6",
@@ -163,7 +178,7 @@ export default function TodayTask({ navigation }: any) {
 
   return (
     <ImageBackground
-      source={require("../assets/bgSplash.png")}
+      source={require("../../assets/bgSplash.png")}
       style={styles.bg}
       resizeMode="cover"
     >
@@ -237,7 +252,12 @@ export default function TodayTask({ navigation }: any) {
 
           {/* Tasks */}
           {TASKS.map((task, i) => (
-            <View key={i} style={styles.taskCard}>
+            <TouchableOpacity
+              key={i}
+              activeOpacity={0.85}
+              onPress={() => navigation?.navigate("TaskDetailStaff", { task })}
+            >
+            <View style={styles.taskCard}>
               <View style={styles.taskTop}>
                 <Text style={styles.taskCategory}>{task.category}</Text>
                 <View
@@ -266,6 +286,7 @@ export default function TodayTask({ navigation }: any) {
                 </View>
               </View>
             </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </Animated.View>
