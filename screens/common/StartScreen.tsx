@@ -8,14 +8,14 @@ import {
   Dimensions,
   ImageBackground,
 } from "react-native";
-import { ArrowIcon } from "../components/Icons";
+import { ArrowIcon } from "../../components/Icons";
 
 const { width } = Dimensions.get("window");
 
 export default function StartScreen({ navigation }: any) {
   return (
     <ImageBackground
-      source={require("../assets/bgSplash.png")}
+      source={require("../../assets/bgSplash.png")}
       style={styles.bg}
       resizeMode="cover"
     >
@@ -27,7 +27,7 @@ export default function StartScreen({ navigation }: any) {
         {/* Illustration */}
         <View style={styles.illustrationContainer}>
           <Image
-            source={require("../assets/letStart.png")}
+            source={require("../../assets/letStart.png")}
             style={styles.illustration}
             resizeMode="contain"
           />

@@ -11,8 +11,8 @@ import {
   HomeIcon,
   CalendarIcon,
   AddIcon,
-  DocumentIcon,
   MapIcon,
+  SettingsIcon,
 } from "./Icons";
 
 const TAB_HEIGHT = 60;
@@ -26,8 +26,8 @@ const tabs = [
   { name: "Home", fab: false, SvgIcon: HomeIcon },
   { name: "Calendar", fab: false, SvgIcon: CalendarIcon },
   { name: "Add", fab: true, SvgIcon: AddIcon },
-  { name: "Documents", fab: false, SvgIcon: DocumentIcon },
-  { name: "Map", fab: false, SvgIcon: MapIcon },
+  { name: "Documents", fab: false, SvgIcon: MapIcon },
+  { name: "Map", fab: false, SvgIcon: SettingsIcon },
 ];
 
 export default function BottomTab({ state, navigation }: any) {
@@ -93,6 +93,7 @@ export default function BottomTab({ state, navigation }: any) {
                 onPress={() => routeIndex >= 0 && navigation.navigate(tab.name)}
                 activeOpacity={0.7}
                 style={styles.tabBtn}
+                hitSlop={{ top: 16, bottom: 16, left: 20, right: 20 }}
               >
                 <tab.SvgIcon color={isFocused ? "#6366F1" : "#A5A0C8"} />
               </TouchableOpacity>

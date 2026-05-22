@@ -10,7 +10,9 @@ import {
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import {
   ChevronDown,
   Layers,
@@ -25,10 +27,7 @@ import {
 } from "lucide-react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import {
-  ArrowIcon,
-  NotificationIcon,
-} from "../../components/Icons";
+import { ArrowIcon, NotificationIcon } from "../../components/Icons";
 
 const { width } = Dimensions.get("window");
 
@@ -77,20 +76,24 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
   const [group, setGroup] = useState(getGroupKeyFromLabel(taskData?.group));
   const [taskName, setTaskName] = useState(taskData?.title || "Kê bàn");
   const [description, setDescription] = useState(
-    taskData?.description || "Sinh viên tình nguyện thực hiện việc kê bàn theo đúng khu vực quy định, số lượng 100 bàn."
+    taskData?.description ||
+      "Sinh viên tình nguyện thực hiện việc kê bàn theo đúng khu vực quy định, số lượng 100 bàn.",
   );
   const [startDate, setStartDate] = useState<Date>(
-    taskData?.startDate ? parseDate(taskData.startDate) : new Date(2026, 4, 1)
+    taskData?.startDate ? parseDate(taskData.startDate) : new Date(2026, 4, 1),
   );
   const [endDate, setEndDate] = useState<Date>(
-    taskData?.endDate ? parseDate(taskData.endDate) : new Date(2026, 4, 2)
+    taskData?.endDate ? parseDate(taskData.endDate) : new Date(2026, 4, 2),
   );
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
   const [openDropdown, setOpenDropdown] = useState(false);
   const CurrentIcon = taskIcons[group] || Package;
-  const groupLabel = taskOptions.find((item) => item.key === group)?.label || taskData?.group || "Nhóm khu A";
+  const groupLabel =
+    taskOptions.find((item) => item.key === group)?.label ||
+    taskData?.group ||
+    "Nhóm khu A";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -102,9 +105,7 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.title}>
-          Nhiệm vụ của sự kiện
-        </Text>
+        <Text style={styles.title}>Nhiệm vụ của sự kiện</Text>
 
         <NotificationIcon color="#1F2937" />
       </View>
@@ -149,9 +150,7 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
                 >
                   <IconComponent size={18} color="#5F33E1" />
 
-                  <Text style={styles.dropdownText}>
-                    {item.label}
-                  </Text>
+                  <Text style={styles.dropdownText}>{item.label}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -246,7 +245,10 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
             <MapPin size={28} color="#5F33E1" />
             <Text style={styles.rowTitle}>Gắn vị trí thực hiện</Text>
           </View>
-          <TouchableOpacity style={styles.innerButton} onPress={() => navigation.navigate("MapEditor")}>
+          <TouchableOpacity
+            style={styles.innerButton}
+            onPress={() => navigation.navigate("MapEditor")}
+          >
             <Text style={styles.innerButtonText}>Thêm vị trí</Text>
           </TouchableOpacity>
         </View>
@@ -256,7 +258,10 @@ export default function TaskDetailScreen({ route }: { route?: any }) {
           <View style={styles.cardLeftIconRow}>
             <Users size={28} color="#5F33E1" />
           </View>
-          <TouchableOpacity style={styles.innerButton} onPress={() => alert("Sang trang xem danh sách thành viên!")}>
+          <TouchableOpacity
+            style={styles.innerButton}
+            onPress={() => navigation.navigate("MemberList")}
+          >
             <Text style={styles.innerButtonText}>Xem thành viên</Text>
           </TouchableOpacity>
         </View>
