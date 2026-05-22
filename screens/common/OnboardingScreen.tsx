@@ -15,7 +15,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
   return (
     <ImageBackground
-      source={require("../assets/bgSplash.png")}
+      source={require("../../assets/bgSplash.png")}
       style={styles.bg}
       resizeMode="cover"
     >
@@ -28,7 +28,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
           <View style={styles.illustrationPlaceholder}>
             <Image
-              source={require("../assets/welcomeBack.png")}
+              source={require("../../assets/welcomeBack.png")}
               style={styles.welcomeImg}
               resizeMode="contain"
             />

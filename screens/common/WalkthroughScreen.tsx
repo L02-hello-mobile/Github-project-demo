@@ -16,19 +16,19 @@ const { width, height } = Dimensions.get("window");
 
 const slides = [
   {
-    image: require("../assets/splash.png"),
+    image: require("../../assets/splash.png"),
     title: "Tạo bản đồ sự kiện nhanh chóng",
     subtitle:
       "Chuyển đổi bản vẽ giấy thành bản đồ tương tác thời gian thực chỉ với 2 bước",
   },
   {
-    image: require("../assets/splash1.png"),
+    image: require("../../assets/splash1.png"),
     title: "Quản lý theo tọa độ",
     subtitle:
       "Chạm để thả Marker và tạo Task ngay tại vị trí thực tế, giúp xóa bỏ sự mơ hồ về không gian",
   },
   {
-    image: require("../assets/splash2.png"),
+    image: require("../../assets/splash2.png"),
     title: "Định vị nhanh, làm việc chuẩn",
     subtitle:
       "Hệ thống tự động phóng to vào vị trí Marker ngay khi bạn nhấn vào thông báo nhắc việc",
@@ -64,7 +64,7 @@ export default function WalkthroughScreen({ navigation }: any) {
 
   return (
     <ImageBackground
-      source={require("../assets/bgSplash.png")}
+      source={require("../../assets/bgSplash.png")}
       style={styles.bg}
       resizeMode="cover"
     >

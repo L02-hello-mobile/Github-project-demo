@@ -6,33 +6,33 @@ function BigCircularProgress({ percent }: { percent: number }) {
   const size = 120;
   const strokeWidth = 12;
   const radius = (size - strokeWidth) / 2;
-  const circumference = Math.PI * radius; 
+  const circumference = Math.PI * radius;
   const filled = (percent / 100) * circumference;
 
   return (
     <View style={{ width: size, height: size / 2 + 20, alignItems: "center", marginTop: 20 }}>
       <Svg width={size} height={size / 2} style={{ position: "absolute" }}>
-        <Circle 
-          cx={size / 2} 
-          cy={size / 2} 
-          r={radius} 
-          stroke="#F3F4F6" 
-          strokeWidth={strokeWidth} 
-          fill="none" 
-          strokeDasharray={`${circumference} ${circumference}`} 
-          strokeLinecap="round" 
-          transform={`rotate(-180 ${size/2} ${size/2})`} 
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#F3F4F6"
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeLinecap="round"
+          transform={`rotate(-180 ${size / 2} ${size / 2})`}
         />
-        <Circle 
-          cx={size / 2} 
-          cy={size / 2} 
-          r={radius} 
-          stroke="#5F33E1" 
-          strokeWidth={strokeWidth} 
-          fill="none" 
-          strokeDasharray={`${filled} ${circumference}`} 
-          strokeLinecap="round" 
-          transform={`rotate(-180 ${size/2} ${size/2})`} 
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#5F33E1"
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={`${filled} ${circumference}`}
+          strokeLinecap="round"
+          transform={`rotate(-180 ${size / 2} ${size / 2})`}
         />
       </Svg>
       <View style={{ position: "absolute", bottom: 0, alignItems: "center" }}>
@@ -45,7 +45,7 @@ function BigCircularProgress({ percent }: { percent: number }) {
 
 export default function EventDetailScreen({ navigation }: any) {
   return (
-    <ImageBackground source={require("../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
+    <ImageBackground source={require("../../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backTxt}>{"<-"}</Text>
@@ -64,7 +64,7 @@ export default function EventDetailScreen({ navigation }: any) {
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>Nhiệm vụ nhóm A</Text>
             <View style={styles.taskBadge}>
-                <Text style={styles.taskBadgeTxt}>6/10 tasks</Text>
+              <Text style={styles.taskBadgeTxt}>6/10 tasks</Text>
             </View>
           </View>
           <Text style={styles.percentTxt}>60%</Text>
@@ -75,16 +75,16 @@ export default function EventDetailScreen({ navigation }: any) {
           </View>
           <View style={styles.legend}>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
-                <Text style={styles.legendTxt}>Done</Text>
+              <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
+              <Text style={styles.legendTxt}>Done</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
-                <Text style={styles.legendTxt}>In process</Text>
+              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
+              <Text style={styles.legendTxt}>In process</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
-                <Text style={styles.legendTxt}>To do</Text>
+              <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
+              <Text style={styles.legendTxt}>To do</Text>
             </View>
           </View>
         </View>
@@ -102,16 +102,16 @@ export default function EventDetailScreen({ navigation }: any) {
           </View>
           <View style={styles.legend}>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
-                <Text style={styles.legendTxt}>Done</Text>
+              <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
+              <Text style={styles.legendTxt}>Done</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
-                <Text style={styles.legendTxt}>In process</Text>
+              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
+              <Text style={styles.legendTxt}>In process</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
-                <Text style={styles.legendTxt}>To do</Text>
+              <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
+              <Text style={styles.legendTxt}>To do</Text>
             </View>
           </View>
         </View>

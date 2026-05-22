@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, 
 
 export default function AccountScreen({ navigation }: any) {
   return (
-    <ImageBackground source={require("../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
+    <ImageBackground source={require("../../assets/bgSplash.png")} style={styles.bg} resizeMode="cover">
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backTxt}>{"<-"}</Text>

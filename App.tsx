@@ -23,25 +23,26 @@ const AppTheme = {
 };
 
 // --- CÁC MÀN HÌNH TỪ NHÁNH MAIN VÀ HEAD ---
-import HomeScreen from "./screens/HomeScreen";
-import WalkthroughScreen from "./screens/WalkthroughScreen";
+import HomeScreen from "./screens/common/HomeScreen";
 import TodayTask from "./screens/TodayTask";
-import EventsTasks_Org from "./screens/EventsTasks_Org";
+import EventsTasks_Org from "./screens/organizer/EventsTasks_Org";
 import BottomTab from "./components/BottomTab";
-import TaskDetailScreen from "./screens/TaskDetail_Org";
-import MapEditorScreen from "./screens/AddLocation";
+import TaskDetailScreen from "./screens/organizer/TaskDetail_Org";
+import MapEditorScreen from "./screens/organizer/AddLocation";
 import StartScreen from "./screens/StartScreen"; // Đừng quên import StartScreen
 
 // --- CÁC MÀN HÌNH AUTH ---
-import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignUpScreen";
-import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+
+import ForgotPasswordScreen from "./screens/common/ForgotPasswordScreen";
 
 // --- CÁC MÀN HÌNH CHI TIẾT ---
-import EventDetailScreen from "./screens/EventDetailScreen";
-import NotificationScreen from "./screens/NotificationScreen";
-import AccountScreen from "./screens/AccountScreen";
+import EventDetailScreen from "./screens/organizer/EventDetailScreen";
+import AccountScreen from "./screens/common/AccountScreen";
+import WalkthroughScreen from "./screens/common/WalkthroughScreen";
+import LoginScreen from "./screens/common/LoginScreen";
+import NotificationScreen from "./screens/common/NotificationScreen";
+import ResetPasswordScreen from "./screens/common/ResetPasswordScreen";
+import SignUpScreen from "./screens/common/SignUpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -174,7 +175,7 @@ export default function App() {
         <Stack.Screen name="EventDetail" component={EventDetailScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
-        
+
         {/* Màn hình từ nhánh main */}
         <Stack.Screen name="EventsTasksOrg" component={EventsTasks_Org} />
         <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
