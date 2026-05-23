@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,15 +9,17 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   ArrowIcon,
   CalendarIcon,
   BriefcaseIcon,
-  MapIcon,
   NotificationIcon,
 } from "../../components/Icons";
+import { taskService } from "../../services/taskService";
+import { useSocketNotification } from "../../context/SocketNotificationContext";
 
 // Generate 61 days: 30 before today, today, 30 after
 const generateDays = () => {
@@ -58,67 +60,78 @@ const ALL_DAYS = generateDays();
 const TODAY_INDEX = 30; // index of today in ALL_DAYS
 const ITEM_WIDTH = 64; // width of each date cell including margin
 
-const FILTERS = ["Tất cả", "Cần làm", "Đang làm", "Hoàn thành"];
+const FILTERS = ["Tất cả", "Cần làm", "Đang làm", "Hoàn thành", "Trễ hạn"];
 
-const TASKS = [
-  {
-    category: "Job Fair",
-    title: "Kê bàn",
-    group: "Nhóm khu C",
-    description:
-      "Sinh viên tình nguyện thực hiện việc kê bàn theo đúng khu vực quy định, số lượng 100 bàn.",
-    startDate: "01 May, 2026",
-    endDate: "01 May, 2026",
-    time: "10:00 AM",
-    status: "Done",
-    statusColor: "#6366F1",
-    statusBg: "#EEF2FF",
-    IconComponent: BriefcaseIcon,
-    iconBg: "#EEF2FF",
-    iconTint: "#6366F1",
-  },
-  {
-    category: "Câu lạc bộ âm nhạc",
-    title: "Mua nước",
-    group: "Nhóm khu B",
-    description:
-      "Mua nước uống cho toàn bộ thành viên tham gia sự kiện, số lượng 200 chai.",
-    startDate: "01 May, 2026",
-    endDate: "01 May, 2026",
-    time: "12:00 PM",
-    status: "In Progress",
-    statusColor: "#F97316",
-    statusBg: "#FFEDD5",
-    IconComponent: MapIcon,
-    iconBg: "#FFEDD5",
-    iconTint: "#F97316",
-  },
-  {
-    category: "Mùa hè xanh",
-    title: "Đi chợ",
-    group: "Nhóm hậu cần",
-    description:
-      "Mua thực phẩm và vật tư cần thiết phục vụ bữa ăn tình nguyện tại địa điểm quy định.",
-    startDate: "01 May, 2026",
-    endDate: "02 May, 2026",
-    time: "07:00 PM",
-    status: "To-do",
-    statusColor: "#8B5CF6",
-    statusBg: "#F5F3FF",
-    IconComponent: BriefcaseIcon,
-    iconBg: "#F5F3FF",
-    iconTint: "#8B5CF6",
-  },
-];
+const STATUS_LABEL: Record<string, string> = {
+  TODO: "Cần làm",
+  IN_PROGRESS: "Đang làm",
+  COMPLETED: "Hoàn thành",
+  OVERDUE: "Trễ hạn",
+};
 
-export default function TodayTask({ navigation }: any) {
-  const isFocused = useIsFocused();
+const STATUS_COLORS: Record<string, { color: string; bg: string }> = {
+  TODO: { color: "#8B5CF6", bg: "#F5F3FF" },
+  IN_PROGRESS: { color: "#F97316", bg: "#FFEDD5" },
+  COMPLETED: { color: "#16A34A", bg: "#DCFCE7" },
+  OVERDUE: { color: "#DC2626", bg: "#FEE2E2" },
+};
+
+const FILTER_TO_STATUS: Record<string, string | null> = {
+  "Tất cả": null,
+  "Cần làm": "TODO",
+  "Đang làm": "IN_PROGRESS",
+  "Hoàn thành": "COMPLETED",
+  "Trễ hạn": "OVERDUE",
+};
+
+const formatTime = (isoString?: string): string => {
+  if (!isoString) return "—";
+  const d = new Date(isoString);
+  const h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+};
+
+const isSameDayAsSelected = (
+  isoString: string,
+  dayInfo: (typeof ALL_DAYS)[0],
+): boolean => {
+  const selected = new Date(dayInfo.fullDate);
+  const d = new Date(isoString);
+  return (
+    d.getDate() === selected.getDate() &&
+    d.getMonth() === selected.getMonth() &&
+    d.getFullYear() === selected.getFullYear()
+  );
+};
+
+export default function TodayTask({ navigation, route }: any) {
+  const { unreadCount } = useSocketNotification();
+  const routeEventId: string | undefined = route?.params?.eventId;
   const [selectedIndex, setSelectedIndex] = useState(TODAY_INDEX);
   const [activeFilter, setActiveFilter] = useState("Tất cả");
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const slideAnim = useRef(
     new Animated.Value(Dimensions.get("window").width),
   ).current;
   const flatListRef = useRef<FlatList>(null);
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      const res = await taskService.getMyTasks(routeEventId);
+      if (res?.data) {
+        setTasks(Array.isArray(res.data) ? res.data : []);
+      }
+    } catch (e) {
+      console.error("Failed to fetch tasks:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const scrollToIndex = (index: number) => {
     const screenWidth = Dimensions.get("window").width - 48; // paddingHorizontal 24*2
@@ -137,12 +150,29 @@ export default function TodayTask({ navigation }: any) {
     }).start();
   }, []);
 
-  useEffect(() => {
-    if (!isFocused) return;
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-    const timer = setTimeout(() => scrollToIndex(TODAY_INDEX), 100);
-    return () => clearTimeout(timer);
-  }, [isFocused]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+      const timer = setTimeout(() => scrollToIndex(TODAY_INDEX), 100);
+      return () => clearTimeout(timer);
+    }, []),
+  );
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesDate = task.startTime
+      ? isSameDayAsSelected(task.startTime, ALL_DAYS[selectedIndex])
+      : false;
+    const statusFilter = FILTER_TO_STATUS[activeFilter];
+    const matchesFilter = statusFilter === null || task.status === statusFilter;
+    return matchesDate && matchesFilter;
+  });
+
+  const getEventName = (task: any): string => {
+    if (task.event && typeof task.event === "object")
+      return task.event.name ?? "—";
+    return "—";
+  };
 
   const handleSelectDate = (index: number) => {
     setSelectedIndex(index);
@@ -193,7 +223,19 @@ export default function TodayTask({ navigation }: any) {
             </View>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Nhiệm vụ hôm nay</Text>
-          <NotificationIcon color="#1F2937" />
+          <TouchableOpacity
+            onPress={() => navigation?.navigate("Notification")}
+            style={{ position: "relative" }}
+          >
+            <NotificationIcon color="#1F2937" />
+            {unreadCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -250,44 +292,78 @@ export default function TodayTask({ navigation }: any) {
             ))}
           </ScrollView>
 
+          {/* Loading */}
+          {loading && (
+            <ActivityIndicator
+              size="large"
+              color="#5F33E1"
+              style={{ marginTop: 40 }}
+            />
+          )}
+
+          {/* Empty state */}
+          {!loading && filteredTasks.length === 0 && (
+            <Text style={styles.emptyText}>Không có nhiệm vụ nào</Text>
+          )}
+
           {/* Tasks */}
-          {TASKS.map((task, i) => (
-            <TouchableOpacity
-              key={i}
-              activeOpacity={0.85}
-              onPress={() => navigation?.navigate("TaskDetailStaff", { task })}
-            >
-            <View style={styles.taskCard}>
-              <View style={styles.taskTop}>
-                <Text style={styles.taskCategory}>{task.category}</Text>
-                <View
-                  style={[styles.taskIconBox, { backgroundColor: task.iconBg }]}
+          {!loading &&
+            filteredTasks.map((task, i) => {
+              const statusInfo =
+                STATUS_COLORS[task.status] ?? STATUS_COLORS.TODO;
+              const statusLabel = STATUS_LABEL[task.status] ?? task.status;
+              return (
+                <TouchableOpacity
+                  key={task._id ?? i}
+                  activeOpacity={0.85}
+                  onPress={() =>
+                    navigation?.navigate("TaskDetailStaff", {
+                      taskId: task._id,
+                    })
+                  }
                 >
-                  <task.IconComponent color={task.iconTint} size={16} />
-                </View>
-              </View>
-              <Text style={styles.taskTitle}>{task.title}</Text>
-              <View style={styles.taskBottom}>
-                <View style={styles.taskTimeRow}>
-                  <CalendarIcon color="#9CA3AF" size={14} />
-                  <Text style={styles.taskTime}>{task.time}</Text>
-                </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    { backgroundColor: task.statusBg },
-                  ]}
-                >
-                  <Text
-                    style={[styles.statusText, { color: task.statusColor }]}
-                  >
-                    {task.status}
-                  </Text>
-                </View>
-              </View>
-            </View>
-            </TouchableOpacity>
-          ))}
+                  <View style={styles.taskCard}>
+                    <View style={styles.taskTop}>
+                      <Text style={styles.taskCategory}>
+                        {getEventName(task)}
+                      </Text>
+                      <View
+                        style={[
+                          styles.taskIconBox,
+                          { backgroundColor: statusInfo.bg },
+                        ]}
+                      >
+                        <BriefcaseIcon color={statusInfo.color} size={16} />
+                      </View>
+                    </View>
+                    <Text style={styles.taskTitle}>{task.title}</Text>
+                    <View style={styles.taskBottom}>
+                      <View style={styles.taskTimeRow}>
+                        <CalendarIcon color="#9CA3AF" size={14} />
+                        <Text style={styles.taskTime}>
+                          {formatTime(task.startTime)}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          { backgroundColor: statusInfo.bg },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.statusText,
+                            { color: statusInfo.color },
+                          ]}
+                        >
+                          {statusLabel}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
         </ScrollView>
       </Animated.View>
     </ImageBackground>
@@ -406,4 +482,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   statusText: { fontSize: 12, fontFamily: "LexendDeca_700Bold" },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 14,
+    color: "#9CA3AF",
+    fontFamily: "LexendDeca_400Regular",
+  },
+  notifBadge: {
+    position: "absolute",
+    top: -4,
+    right: -6,
+    backgroundColor: "#EF4444",
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  notifBadgeText: {
+    color: "#FFF",
+    fontSize: 10,
+    fontWeight: "700",
+  },
 });

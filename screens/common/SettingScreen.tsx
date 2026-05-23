@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,10 @@ import {
   ImageBackground,
 } from "react-native";
 import { ArrowIcon } from "../../components/Icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { socketService } from "../../services/socketService";
+import { notificationService } from "../../services/notificationService";
+import { unregisterPushToken } from "../../utils/pushNotifications";
 import {
   Lock,
   LogOut,
@@ -29,6 +33,7 @@ type SettingRowProps = {
   hasArrow?: boolean;
   labelColor?: string;
   onPress?: () => void;
+  testID?: string;
 };
 
 function SettingRow({
@@ -39,9 +44,11 @@ function SettingRow({
   hasArrow,
   labelColor = "#1F2937",
   onPress,
+  testID,
 }: SettingRowProps) {
   return (
     <TouchableOpacity
+      testID={testID}
       style={styles.row}
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
@@ -59,9 +66,11 @@ function SettingRow({
 function CustomToggle({
   value,
   onToggle,
+  testID,
 }: {
   value: boolean;
   onToggle: (v: boolean) => void;
+  testID?: string;
 }) {
   const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -85,7 +94,11 @@ function CustomToggle({
   });
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity
+      testID={testID}
+      activeOpacity={0.85}
+      onPress={handlePress}
+    >
       <Animated.View style={[styles.track, { backgroundColor: bgColor }]}>
         <Animated.View
           style={[styles.thumb, { transform: [{ translateX }] }]}
@@ -101,22 +114,73 @@ type ToggleRowProps = {
   label: string;
   value: boolean;
   onToggle: (v: boolean) => void;
+  testID?: string;
 };
 
-function ToggleRow({ icon, iconBg, label, value, onToggle }: ToggleRowProps) {
+function ToggleRow({
+  icon,
+  iconBg,
+  label,
+  value,
+  onToggle,
+  testID,
+}: ToggleRowProps) {
   return (
     <View style={styles.row}>
       <View style={[styles.iconBox, { backgroundColor: iconBg }]}>{icon}</View>
       <Text style={styles.rowLabel}>{label}</Text>
-      <CustomToggle value={value} onToggle={onToggle} />
+      <CustomToggle testID={testID} value={value} onToggle={onToggle} />
     </View>
   );
 }
 
 export default function SettingScreen({ navigation }: any) {
+  const [userData, setUserData] = useState<any>(null);
   const [notifAll, setNotifAll] = useState(true);
   const [notifReminder, setNotifReminder] = useState(true);
   const [notifTask, setNotifTask] = useState(true);
+
+  useEffect(() => {
+    loadUserData();
+    loadNotifSettings();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const stored = await AsyncStorage.getItem("userData");
+      if (stored) setUserData(JSON.parse(stored));
+    } catch {}
+  };
+
+  const loadNotifSettings = async () => {
+    try {
+      const res = await notificationService.getSettings();
+      const s = res?.data ?? res ?? {};
+      if (typeof s.allNotifications === "boolean")
+        setNotifAll(s.allNotifications);
+      if (typeof s.taskReminder === "boolean") setNotifReminder(s.taskReminder);
+      if (typeof s.taskAssigned === "boolean") setNotifTask(s.taskAssigned);
+    } catch {}
+  };
+
+  const handleToggle = (field: string, value: boolean) => {
+    const fieldMap: Record<string, string> = {
+      all: "allNotifications",
+      reminder: "taskReminder",
+      task: "taskAssigned",
+    };
+    const apiField = fieldMap[field] || field;
+    notificationService.updateSettings({ [apiField]: value }).catch(() => {});
+  };
+
+  const handleLogout = async () => {
+    await unregisterPushToken().catch(() => {});
+    await AsyncStorage.multiRemove(["userToken", "userData"]);
+    socketService.disconnect();
+    navigation.replace("Start");
+  };
+
+  const initial = (userData?.fullName || "U")[0].toUpperCase();
 
   return (
     <ImageBackground
@@ -148,11 +212,15 @@ export default function SettingScreen({ navigation }: any) {
           {/* User info */}
           <View style={styles.userRow}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarTxt}>M</Text>
+              <Text style={styles.avatarTxt}>{initial}</Text>
             </View>
             <View>
-              <Text style={styles.userName}>Hello Mobile</Text>
-              <Text style={styles.userEmail}>helloMobile@gmail.com</Text>
+              <Text testID="setting-user-name" style={styles.userName}>
+                {userData?.fullName || "Đang tải..."}
+              </Text>
+              <Text testID="setting-user-email" style={styles.userEmail}>
+                {userData?.email || ""}
+              </Text>
             </View>
           </View>
 
@@ -169,11 +237,12 @@ export default function SettingScreen({ navigation }: any) {
           <View style={styles.divider} />
 
           <SettingRow
+            testID="btn-logout"
             icon={<LogOut size={18} color="#FFF" />}
             iconBg="#EF4444"
             label="Đăng xuất"
             labelColor="#EF4444"
-            onPress={() => navigation.navigate("Login")}
+            onPress={handleLogout}
           />
         </View>
 
@@ -185,7 +254,11 @@ export default function SettingScreen({ navigation }: any) {
             iconBg="#6366F1"
             label="Tất cả thông báo"
             value={notifAll}
-            onToggle={setNotifAll}
+            testID="toggle-notif-all"
+            onToggle={(v) => {
+              setNotifAll(v);
+              handleToggle("all", v);
+            }}
           />
           <View style={styles.divider} />
           <ToggleRow
@@ -193,7 +266,11 @@ export default function SettingScreen({ navigation }: any) {
             iconBg="#F97316"
             label="Nhắc việc (5 phút trước)"
             value={notifReminder}
-            onToggle={setNotifReminder}
+            testID="toggle-notif-reminder"
+            onToggle={(v) => {
+              setNotifReminder(v);
+              handleToggle("reminder", v);
+            }}
           />
           <View style={styles.divider} />
           <ToggleRow
@@ -201,7 +278,11 @@ export default function SettingScreen({ navigation }: any) {
             iconBg="#22C55E"
             label="Task được giao"
             value={notifTask}
-            onToggle={setNotifTask}
+            testID="toggle-notif-task"
+            onToggle={(v) => {
+              setNotifTask(v);
+              handleToggle("task", v);
+            }}
           />
         </View>
 

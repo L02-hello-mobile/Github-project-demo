@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,9 @@ import {
   Animated,
 } from "react-native";
 
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
+import { taskService } from "../../services/taskService";
+import { useSocketNotification } from "../../context/SocketNotificationContext";
 import {
   Search,
   ChevronDown,
@@ -29,7 +31,6 @@ import {
   CalendarIcon,
   NotificationIcon,
 } from "../../components/Icons";
-
 
 // ======================
 // CONSTANTS
@@ -49,8 +50,18 @@ const generateDays = () => {
   const today = new Date();
   const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const MONTH_NAMES = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   for (let i = -30; i <= 30; i++) {
     const d = new Date(today);
@@ -79,6 +90,13 @@ const taskIcons: any = {
   management: ClipboardList,
 };
 
+const STATUS_MAP: Record<string, string> = {
+  TODO: "Cần làm",
+  IN_PROGRESS: "Đang làm",
+  COMPLETED: "Hoàn thành",
+  OVERDUE: "Trễ hạn",
+};
+
 const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
   "Hoàn thành": { color: "#6366F1", bg: "#EEF2FF" },
   "Đang làm": { color: "#F97316", bg: "#FFEDD5" },
@@ -88,34 +106,50 @@ const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
 
 const FILTERS = ["Tất cả", "Cần làm", "Đang làm", "Hoàn thành", "Trễ hạn"];
 
-const groups = ["Nhóm", "Nhóm khu A", "Nhóm kỹ thuật", "Media"];
-
-const tasks = [
-  { id: "1", group: "Nhóm khu A", title: "Kê bàn", time: "10:00 AM", status: "Hoàn thành", icon: "logistics" },
-  { id: "2", group: "Nhóm kỹ thuật", title: "Kiểm tra âm thanh", time: "10:30 AM", status: "Đang làm", icon: "technical" },
-  { id: "3", group: "Media", title: "Chụp ảnh khách", time: "02:00 PM", status: "Cần làm", icon: "media" },
-  { id: "4", group: "Media", title: "Quay video sự kiện", time: "04:00 PM", status: "Trễ hạn", icon: "media" },
-];
+function formatTaskTime(isoString?: string): string {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  const hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const h = hours % 12 || 12;
+  return `${h}:${minutes} ${ampm}`;
+}
 
 // ======================
 // MAIN SCREEN
 // ======================
 
-export default function EventsTasksOrg({ navigation }: { navigation: any }) {
+export default function EventsTasksOrg({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route?: any;
+}) {
+  const { unreadCount } = useSocketNotification();
+  const eventId = route?.params?.eventId;
   const isFocused = useIsFocused();
   const [selectedIndex, setSelectedIndex] = useState(TODAY_INDEX);
   const [activeFilter, setActiveFilter] = useState("Tất cả");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("Nhóm");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const slideAnim = useRef(new Animated.Value(Dimensions.get("window").width)).current;
+  const slideAnim = useRef(
+    new Animated.Value(Dimensions.get("window").width),
+  ).current;
   const flatListRef = useRef<FlatList>(null);
 
   const scrollToIndex = (index: number) => {
     const screenWidth = Dimensions.get("window").width - 48;
     const offset = index * ITEM_WIDTH - screenWidth / 2 + ITEM_WIDTH / 2;
-    flatListRef.current?.scrollToOffset({ offset: Math.max(0, offset), animated: true });
+    flatListRef.current?.scrollToOffset({
+      offset: Math.max(0, offset),
+      animated: true,
+    });
   };
 
   useEffect(() => {
@@ -128,20 +162,60 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
 
   useEffect(() => {
     if (!isFocused) return;
+    setSelectedIndex(TODAY_INDEX);
     flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
     const timer = setTimeout(() => scrollToIndex(TODAY_INDEX), 100);
     return () => clearTimeout(timer);
   }, [isFocused]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!eventId) return;
+      setLoading(true);
+      taskService
+        .getEventTasks(eventId)
+        .then((res) => {
+          const list = res?.data ?? res;
+          setTasks(Array.isArray(list) ? list : []);
+        })
+        .catch((e) => console.error("EventsTasks fetch error:", e))
+        .finally(() => setLoading(false));
+    }, [eventId]),
+  );
 
   const handleSelectDate = (index: number) => {
     setSelectedIndex(index);
     scrollToIndex(index);
   };
 
-  const filteredTasks = tasks.filter((t) => {
-    const matchFilter = activeFilter === "Tất cả" || t.status === activeFilter;
-    const matchGroup = selectedGroup === "Nhóm" || t.group === selectedGroup;
-    const matchSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
+  const selectedDay = ALL_DAYS[selectedIndex];
+  const displayTasks = tasks.map((t) => ({
+    ...t,
+    displayStatus: STATUS_MAP[t.status] ?? t.status,
+    groupName:
+      typeof t.group === "object"
+        ? t.group?.name
+        : typeof t.group === "string" && /^[a-f\d]{24}$/i.test(t.group)
+          ? undefined
+          : t.group,
+  }));
+  const groupNames = [
+    "Nhóm",
+    ...Array.from(
+      new Set(displayTasks.map((t) => t.groupName).filter(Boolean)),
+    ),
+  ];
+  const filteredTasks = displayTasks.filter((t) => {
+    const matchFilter =
+      activeFilter === "Tất cả" || t.displayStatus === activeFilter;
+    const matchGroup =
+      selectedGroup === "Nhóm" || t.groupName === selectedGroup;
+    const matchSearch = t.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchDate = t.startTime
+      ? new Date(t.startTime).toDateString() === selectedDay.fullDate
+      : true;
     return matchFilter && matchGroup && matchSearch;
   });
 
@@ -158,9 +232,15 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
         style={[styles.dateCell, isSelected && styles.dateCellActive]}
         onPress={() => handleSelectDate(index)}
       >
-        <Text style={[styles.dateMonth, isSelected && styles.dateTextActive]}>{item.month}</Text>
-        <Text style={[styles.dateNum, isSelected && styles.dateTextActive]}>{item.date}</Text>
-        <Text style={[styles.dateDay, isSelected && styles.dateTextActive]}>{item.day}</Text>
+        <Text style={[styles.dateMonth, isSelected && styles.dateTextActive]}>
+          {item.month}
+        </Text>
+        <Text style={[styles.dateNum, isSelected && styles.dateTextActive]}>
+          {item.date}
+        </Text>
+        <Text style={[styles.dateDay, isSelected && styles.dateTextActive]}>
+          {item.day}
+        </Text>
         {item.isToday && !isSelected && <View style={styles.todayDot} />}
       </TouchableOpacity>
     );
@@ -172,7 +252,9 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
       style={styles.bg}
       resizeMode="cover"
     >
-      <Animated.View style={[styles.container, { transform: [{ translateX: slideAnim }] }]}>
+      <Animated.View
+        style={[styles.container, { transform: [{ translateX: slideAnim }] }]}
+      >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation?.goBack()}>
@@ -181,7 +263,19 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
             </View>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Nhiệm vụ của sự kiện</Text>
-          <NotificationIcon color="#1F2937" />
+          <TouchableOpacity
+            onPress={() => navigation?.navigate("Notification")}
+            style={{ position: "relative" }}
+          >
+            <NotificationIcon color="#1F2937" />
+            {unreadCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -217,10 +311,18 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
             {FILTERS.map((f) => (
               <TouchableOpacity
                 key={f}
-                style={[styles.filterBtn, f === activeFilter && styles.filterBtnActive]}
+                style={[
+                  styles.filterBtn,
+                  f === activeFilter && styles.filterBtnActive,
+                ]}
                 onPress={() => setActiveFilter(f)}
               >
-                <Text style={[styles.filterText, f === activeFilter && styles.filterTextActive]}>
+                <Text
+                  style={[
+                    styles.filterText,
+                    f === activeFilter && styles.filterTextActive,
+                  ]}
+                >
                   {f}
                 </Text>
               </TouchableOpacity>
@@ -246,20 +348,33 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
                 onPress={() => setIsMenuOpen(!isMenuOpen)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.dropdownText} numberOfLines={1}>{selectedGroup}</Text>
+                <Text style={styles.dropdownText} numberOfLines={1}>
+                  {selectedGroup}
+                </Text>
                 <ChevronDown size={16} color="#6B7280" />
                 <View style={styles.dropdownUnderline} />
               </TouchableOpacity>
 
               {isMenuOpen && (
                 <View style={styles.menuBox}>
-                  {groups.map((item) => (
+                  {groupNames.map((item) => (
                     <TouchableOpacity
                       key={item}
                       style={styles.menuItem}
-                      onPress={() => { setSelectedGroup(item); setIsMenuOpen(false); }}
+                      onPress={() => {
+                        setSelectedGroup(item);
+                        setIsMenuOpen(false);
+                      }}
                     >
-                      <Text style={[styles.menuItemText, selectedGroup === item && { color: "#5F33E1", fontWeight: "700" }]}>
+                      <Text
+                        style={[
+                          styles.menuItemText,
+                          selectedGroup === item && {
+                            color: "#5F33E1",
+                            fontWeight: "700",
+                          },
+                        ]}
+                      >
                         {item}
                       </Text>
                     </TouchableOpacity>
@@ -271,29 +386,37 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
 
           {/* Task cards */}
           {filteredTasks.map((task) => {
-            const s = STATUS_STYLES[task.status] ?? { color: "#6B7280", bg: "#F3F4F6" };
-            const IconComponent = taskIcons[task.icon];
+            const s = STATUS_STYLES[task.displayStatus] ?? {
+              color: "#6B7280",
+              bg: "#F3F4F6",
+            };
             return (
               <TouchableOpacity
-                key={task.id}
+                key={task._id}
                 style={styles.taskCard}
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate("TaskDetail", { task })}
+                onPress={() =>
+                  navigation.navigate("TaskDetail", { taskId: task._id })
+                }
               >
                 <View style={styles.taskTop}>
-                  <Text style={styles.taskCategory}>{task.group}</Text>
+                  <Text style={styles.taskCategory}>{task.groupName}</Text>
                   <View style={[styles.taskIconBox, { backgroundColor: s.bg }]}>
-                    <IconComponent size={16} color={s.color} />
+                    <Package size={16} color={s.color} />
                   </View>
                 </View>
                 <Text style={styles.taskTitle}>{task.title}</Text>
                 <View style={styles.taskBottom}>
                   <View style={styles.taskTimeRow}>
                     <CalendarIcon color="#9CA3AF" size={14} />
-                    <Text style={styles.taskTime}>{task.time}</Text>
+                    <Text style={styles.taskTime}>
+                      {formatTaskTime(task.startTime)}
+                    </Text>
                   </View>
                   <View style={[styles.statusBadge, { backgroundColor: s.bg }]}>
-                    <Text style={[styles.statusText, { color: s.color }]}>{task.status}</Text>
+                    <Text style={[styles.statusText, { color: s.color }]}>
+                      {task.displayStatus}
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -304,7 +427,11 @@ export default function EventsTasksOrg({ navigation }: { navigation: any }) {
 
       {/* Thêm nhiệm vụ button - cố định ở đáy */}
       <View style={styles.addBtnWrapper}>
-        <TouchableOpacity style={styles.addBtn} activeOpacity={0.85}>
+        <TouchableOpacity
+          style={styles.addBtn}
+          activeOpacity={0.85}
+          onPress={() => navigation.navigate("AddTask", { eventId })}
+        >
           <Text style={styles.addBtnText}>Thêm nhiệm vụ</Text>
         </TouchableOpacity>
       </View>
@@ -343,7 +470,12 @@ const styles = StyleSheet.create({
   },
   dateCellActive: { backgroundColor: "#5F33E1" },
   dateMonth: { fontSize: 11, color: "#9CA3AF", marginBottom: 2 },
-  dateNum: { fontSize: 20, fontWeight: "bold", color: "#1F2937", marginBottom: 2 },
+  dateNum: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1F2937",
+    marginBottom: 2,
+  },
   dateDay: { fontSize: 11, color: "#9CA3AF" },
   dateTextActive: { color: "#FFFFFF" },
   todayDot: {
@@ -492,5 +624,22 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontFamily: "LexendDeca_700Bold",
+  },
+  notifBadge: {
+    position: "absolute",
+    top: -4,
+    right: -6,
+    backgroundColor: "#EF4444",
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  notifBadgeText: {
+    color: "#FFF",
+    fontSize: 10,
+    fontWeight: "700",
   },
 });

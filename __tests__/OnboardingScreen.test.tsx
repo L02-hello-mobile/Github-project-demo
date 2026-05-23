@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import OnboardingScreen from "../screens/OnboardingScreen";
+import OnboardingScreen from "../screens/common/OnboardingScreen";
 
 describe("OnboardingScreen (Login)", () => {
   it("1. Hiển thị đúng tiêu đề chào mừng", () => {

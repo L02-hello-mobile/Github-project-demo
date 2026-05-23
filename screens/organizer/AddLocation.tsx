@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -10,12 +10,18 @@ import {
   PanResponder,
   LayoutRectangle,
   Animated,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
 } from "react-native";
 
 import { MapPin, Trash2, Plus, Minus } from "lucide-react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { ArrowIcon, NotificationIcon } from "../../components/Icons";
+import { eventService } from "../../services/eventService";
+import { useSocketNotification } from "../../context/SocketNotificationContext";
 
 const { width } = Dimensions.get("window");
 
@@ -34,8 +40,22 @@ function pinchDistance(touches: { pageX: number; pageY: number }[]) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export default function MapEditorScreen() {
-  const [markers, setMarkers] = useState<any[]>([]);
+export default function MapEditorScreen({ route }: { route?: any }) {
+  const { unreadCount } = useSocketNotification();
+  const eventId: string | undefined = route?.params?.eventId;
+  const [markers, setMarkers] = useState<any[]>(() => {
+    const c = route?.params?.existingCoords;
+    if (!c || c.x == null) return [];
+    return [
+      {
+        id: "task-marker",
+        xPercent: c.x / 100,
+        yPercent: c.y / 100,
+        label: c.label || "",
+      },
+    ];
+  });
+  const [mapImageUrl, setMapImageUrl] = useState<string | undefined>(undefined);
   const [imageLayout, setImageLayout] = useState<LayoutRectangle>({
     x: 0,
     y: 0,
@@ -44,8 +64,19 @@ export default function MapEditorScreen() {
   });
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [draggingMarkerId, setDraggingMarkerId] = useState<string | null>(null);
+  const [labelingMarkerId, setLabelingMarkerId] = useState<string | null>(null);
+  const [labelInput, setLabelInput] = useState("");
   const panResponders = useRef<Record<string, any>>({});
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    if (!eventId) return;
+    eventService.getEventDetail(eventId).then((res) => {
+      if (res?.data?.mapImageUrl) {
+        setMapImageUrl(res.data.mapImageUrl);
+      }
+    });
+  }, [eventId]);
 
   // ===== ZOOM / PAN STATE =====
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -146,13 +177,15 @@ export default function MapEditorScreen() {
     const xPercent = x / width;
     const yPercent = y / height;
 
+    // Single marker mode: replace existing
     const newMarker = {
-      id: Date.now().toString(),
+      id: "task-marker",
       xPercent,
       yPercent,
+      label: "",
     };
-
-    setMarkers((prev) => [...prev, newMarker]);
+    setMarkers([newMarker]);
+    setSelectedMarkerId("task-marker");
   };
 
   // =========================
@@ -190,8 +223,22 @@ export default function MapEditorScreen() {
     );
   };
 
-  const clamp = (value: number, min: number, max: number) =>
-    Math.min(max, Math.max(min, value));
+  const handleMarkerTap = (id: string) => {
+    const marker = markers.find((m) => m.id === id);
+    setSelectedMarkerId(id);
+    setLabelInput(marker?.label ?? "");
+    setLabelingMarkerId(id);
+  };
+
+  const saveLabel = () => {
+    setMarkers((prev) =>
+      prev.map((m) =>
+        m.id === labelingMarkerId ? { ...m, label: labelInput.trim() } : m,
+      ),
+    );
+    setLabelingMarkerId(null);
+    setLabelInput("");
+  };
 
   const handleMarkerDrag = (id: string, pageX: number, pageY: number) => {
     const x = clamp(pageX - imageLayout.x, 0, imageLayout.width);
@@ -241,6 +288,13 @@ export default function MapEditorScreen() {
           onPress={() => navigation.navigate("Notification")}
         >
           <NotificationIcon color="#1F2937" />
+          {unreadCount > 0 && (
+            <View style={styles.notifBadge}>
+              <Text style={styles.notifBadgeText}>
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -264,7 +318,11 @@ export default function MapEditorScreen() {
               onLayout={(event) => setImageLayout(event.nativeEvent.layout)}
             >
               <ImageBackground
-                source={{ uri: "https://picsum.photos/900/700" }}
+                source={
+                  mapImageUrl
+                    ? { uri: mapImageUrl }
+                    : require("../../assets/bgSplash.png")
+                }
                 style={styles.image}
                 imageStyle={{ borderRadius: 20 }}
               >
@@ -281,7 +339,7 @@ export default function MapEditorScreen() {
                   return (
                     <Pressable
                       key={marker.id}
-                      onPress={() => setSelectedMarkerId(marker.id)}
+                      onPress={() => handleMarkerTap(marker.id)}
                       onLongPress={() => deleteMarker(marker.id)}
                       hitSlop={10}
                       style={[
@@ -296,6 +354,16 @@ export default function MapEditorScreen() {
                         color={isSelected ? "#7C3AED" : "#FF4D4F"}
                         fill={isSelected ? "#7C3AED" : "#FF4D4F"}
                       />
+                      {!!marker.label && (
+                        <View style={styles.labelBubble}>
+                          <Text
+                            style={styles.labelBubbleText}
+                            numberOfLines={1}
+                          >
+                            {marker.label}
+                          </Text>
+                        </View>
+                      )}
                     </Pressable>
                   );
                 })}
@@ -325,15 +393,63 @@ export default function MapEditorScreen() {
       </View>
 
       <Text style={styles.hint}>
-        Tap để thêm • Kéo để di chuyển • Giữ để xoá
+        Tap để thêm • Chạm marker để đặt nhãn • Kéo để di chuyển • Giữ để xóa
       </Text>
 
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={() => alert("Vị trí đã được xác nhận")}
+        onPress={() => {
+          if (markers.length === 0) {
+            navigation.goBack();
+            return;
+          }
+          const m = markers[0];
+          const mapCoordinates = {
+            x: Math.round(m.xPercent * 100),
+            y: Math.round(m.yPercent * 100),
+            label: m.label || "",
+          };
+          navigation.navigate("AddTask", { eventId, mapCoordinates });
+        }}
       >
         <Text style={styles.confirmButtonText}>Xác nhận</Text>
       </TouchableOpacity>
+
+      {/* Label input modal */}
+      <Modal visible={!!labelingMarkerId} transparent animationType="fade">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.labelOverlay}
+        >
+          <View style={styles.labelSheet}>
+            <Text style={styles.labelSheetTitle}>Đặt nhãn cho điểm</Text>
+            <TextInput
+              style={styles.labelSheetInput}
+              placeholder="Nhập tên / mô tả..."
+              placeholderTextColor="#B0AEC8"
+              value={labelInput}
+              onChangeText={setLabelInput}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={saveLabel}
+            />
+            <View style={styles.labelSheetActions}>
+              <TouchableOpacity
+                style={styles.labelCancelBtn}
+                onPress={() => {
+                  setLabelingMarkerId(null);
+                  setLabelInput("");
+                }}
+              >
+                <Text style={styles.labelCancelText}>Huỷ</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.labelSaveBtn} onPress={saveLabel}>
+                <Text style={styles.labelSaveText}>Lưu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -371,6 +487,23 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
+  },
+  notifBadge: {
+    position: "absolute",
+    top: 2,
+    right: 0,
+    backgroundColor: "#EF4444",
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  notifBadgeText: {
+    color: "#FFF",
+    fontSize: 10,
+    fontWeight: "700",
   },
   image: {
     width: "100%",
@@ -463,6 +596,84 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
+    fontWeight: "700",
+  },
+
+  // Label bubble on marker
+  labelBubble: {
+    position: "absolute",
+    top: -22,
+    left: "50%",
+    transform: [{ translateX: -30 }],
+    backgroundColor: "#5F33E1",
+    borderRadius: 8,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    width: 60,
+    alignItems: "center",
+  },
+  labelBubbleText: {
+    color: "#fff",
+    fontSize: 9,
+    fontWeight: "700",
+  },
+
+  // Label input modal
+  labelOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  labelSheet: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 36,
+  },
+  labelSheetTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#1A1D1E",
+    marginBottom: 14,
+  },
+  labelSheetInput: {
+    borderWidth: 1.5,
+    borderColor: "#5F33E1",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: "#1A1D1E",
+    marginBottom: 16,
+  },
+  labelSheetActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  labelCancelBtn: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+  },
+  labelCancelText: {
+    fontSize: 15,
+    color: "#9CA3AF",
+    fontWeight: "600",
+  },
+  labelSaveBtn: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 14,
+    backgroundColor: "#5F33E1",
+    alignItems: "center",
+  },
+  labelSaveText: {
+    fontSize: 15,
+    color: "#fff",
     fontWeight: "700",
   },
 });

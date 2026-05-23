@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,12 @@ import {
   TouchableOpacity,
   Pressable,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { ArrowIcon } from "../../components/Icons";
 import Svg, { Circle } from "react-native-svg";
+import { eventService } from "../../services/eventService";
+import { useFocusEffect } from "@react-navigation/native";
 
 function BigCircularProgress({ percent }: { percent: number }) {
   const size = 120;
@@ -61,7 +64,34 @@ function BigCircularProgress({ percent }: { percent: number }) {
   );
 }
 
-export default function EventDetailScreen({ navigation }: any) {
+export default function EventDetailScreen({ navigation, route }: any) {
+  const { eventId } = route?.params || {};
+  const [event, setEvent] = useState<any>(null);
+  const [progress, setProgress] = useState(0);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!eventId) {
+        setLoadingData(false);
+        return;
+      }
+      setLoadingData(true);
+      Promise.all([
+        eventService.getEventDetail(eventId),
+        eventService.getEventProgress(eventId),
+      ])
+        .then(([eventRes, progressRes]) => {
+          setEvent(eventRes.data || eventRes);
+          const pct =
+            progressRes.data?.percentage ?? progressRes.percentage ?? 0;
+          setProgress(Math.round(pct));
+        })
+        .catch((e) => console.error("EventDetail fetch error:", e))
+        .finally(() => setLoadingData(false));
+    }, [eventId]),
+  );
+
   return (
     <ImageBackground
       source={require("../../assets/bgSplash.png")}
@@ -77,7 +107,7 @@ export default function EventDetailScreen({ navigation }: any) {
             <ArrowIcon color="#1F2937" size={22} />
           </View>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Job fair</Text>
+        <Text style={styles.headerTitle}>{event?.name || "Sự kiện"}</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -85,106 +115,70 @@ export default function EventDetailScreen({ navigation }: any) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.sectionTitle}>Tiến độ công việc</Text>
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionTitle}>Tiến độ công việc</Text>
+          <TouchableOpacity
+            style={styles.allTasksBtn}
+            onPress={() => navigation.navigate("EventsTasks_Org", { eventId })}
+          >
+            <Text style={styles.allTasksBtnTxt}>Xem tất cả</Text>
+          </TouchableOpacity>
+        </View>
         <View style={{ alignItems: "center", marginBottom: 40 }}>
-          <BigCircularProgress percent={46} />
+          <BigCircularProgress percent={loadingData ? 0 : progress} />
         </View>
 
-        <Pressable
-          android_ripple={{ color: "transparent" }}
-          onPress={() => navigation.navigate("EventsTasks_Org")}
-          style={styles.card}
-        >
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Nhiệm vụ nhóm A</Text>
-            <View style={styles.taskBadge}>
-              <Text style={styles.taskBadgeTxt}>6/10 tasks</Text>
-            </View>
-          </View>
-          <Text style={styles.percentTxt}>60%</Text>
-          <View style={styles.multiBar}>
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 6, backgroundColor: "#0EA5E9" },
-              ]}
-            />
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 2, backgroundColor: "#22C55E" },
-              ]}
-            />
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 2, backgroundColor: "#EAB308" },
-              ]}
-            />
-          </View>
-          <View style={styles.legend}>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
-              <Text style={styles.legendTxt}>Done</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
-              <Text style={styles.legendTxt}>In process</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
-              <Text style={styles.legendTxt}>To do</Text>
-            </View>
-          </View>
-        </Pressable>
-
-        <Pressable
-          android_ripple={{ color: "transparent" }}
-          onPress={() => navigation.navigate("EventsTasks_Org")}
-          style={styles.card}
-        >
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Nhiệm vụ nhóm B</Text>
-            <View
-              style={[styles.taskBadge, { width: 10, height: 10, padding: 0 }]}
-            />
-          </View>
-          <Text style={styles.percentTxt}>60%</Text>
-          <View style={styles.multiBar}>
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 6, backgroundColor: "#0EA5E9" },
-              ]}
-            />
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 2, backgroundColor: "#22C55E" },
-              ]}
-            />
-            <View
-              style={[
-                styles.barSegment,
-                { flex: 2, backgroundColor: "#EAB308" },
-              ]}
-            />
-          </View>
-          <View style={styles.legend}>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
-              <Text style={styles.legendTxt}>Done</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#22C55E" }]} />
-              <Text style={styles.legendTxt}>In process</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
-              <Text style={styles.legendTxt}>To do</Text>
-            </View>
-          </View>
-        </Pressable>
+        {loadingData ? (
+          <ActivityIndicator color="#5F33E1" style={{ marginVertical: 20 }} />
+        ) : (
+          (event?.groups || []).map((group: any) => (
+            <Pressable
+              key={group._id}
+              android_ripple={{ color: "transparent" }}
+              onPress={() =>
+                navigation.navigate("EventsTasks_Org", {
+                  eventId,
+                  groupId: group._id,
+                })
+              }
+              style={styles.card}
+            >
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>{group.name}</Text>
+                <View style={styles.taskBadge}>
+                  <Text style={styles.taskBadgeTxt}>
+                    {group.taskCount || 0} tasks
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.percentTxt}>{progress}%</Text>
+              <View style={styles.multiBar}>
+                <View
+                  style={[
+                    styles.barSegment,
+                    { flex: progress || 1, backgroundColor: "#0EA5E9" },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.barSegment,
+                    { flex: 100 - progress || 1, backgroundColor: "#EAB308" },
+                  ]}
+                />
+              </View>
+              <View style={styles.legend}>
+                <View style={styles.legendItem}>
+                  <View style={[styles.dot, { backgroundColor: "#0EA5E9" }]} />
+                  <Text style={styles.legendTxt}>Done</Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.dot, { backgroundColor: "#EAB308" }]} />
+                  <Text style={styles.legendTxt}>To do</Text>
+                </View>
+              </View>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
     </ImageBackground>
   );
@@ -205,6 +199,23 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 18, fontWeight: "bold" },
   content: { padding: 25 },
   sectionTitle: { fontSize: 16, fontWeight: "bold", color: "#1F2937" },
+  sectionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  allTasksBtn: {
+    backgroundColor: "#EEE9FF",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  allTasksBtnTxt: {
+    color: "#5F33E1",
+    fontSize: 13,
+    fontWeight: "600",
+  },
   card: {
     backgroundColor: "#FFF",
     borderRadius: 15,

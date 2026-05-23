@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+﻿import React, { useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,19 @@ import {
   Dimensions,
   PanResponder,
   Animated,
+  ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { MapPin, Plus, Minus } from "lucide-react-native";
 import { ArrowIcon, NotificationIcon } from "../../components/Icons";
+import { eventService } from "../../services/eventService";
+import { taskService } from "../../services/taskService";
+import { socketService } from "../../services/socketService";
+import { useSocketNotification } from "../../context/SocketNotificationContext";
 
 const { width } = Dimensions.get("window");
 const IMAGE_WIDTH = width - 48;
@@ -32,8 +41,91 @@ function pinchDistance(touches: { pageX: number; pageY: number }[]) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+const MARKER_COLORS: Record<string, string> = {
+  TODO: "#9CA3AF",
+  IN_PROGRESS: "#F97316",
+  COMPLETED: "#16A34A",
+  OVERDUE: "#DC2626",
+};
+
 export default function MapView_Staff() {
+  const { unreadCount } = useSocketNotification();
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const { eventId, taskId } = (route.params ?? {}) as {
+    eventId?: string;
+    taskId?: string;
+  };
+
+  const [mapImageUrl, setMapImageUrl] = useState<string | null>(null);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loadingMap, setLoadingMap] = useState(false);
+
+  const visibleTasks = (
+    taskId ? tasks.filter((t) => t._id === taskId) : tasks
+  ).filter((t) => t.mapCoordinates?.x != null);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!eventId) return;
+      setLoadingMap(true);
+      Promise.all([
+        eventService.getEventDetail(eventId),
+        taskService.getEventTasks(eventId),
+        taskId ? taskService.getTaskDetail(taskId) : Promise.resolve(null),
+      ])
+        .then(([eventRes, tasksRes, focusedTaskRes]) => {
+          if (eventRes?.data) setMapImageUrl(eventRes.data.mapImageUrl ?? null);
+          if (tasksRes?.data) {
+            const nextTasks = Array.isArray(tasksRes.data) ? tasksRes.data : [];
+            const focusedTask = focusedTaskRes?.data;
+
+            if (focusedTask?._id) {
+              const taskExists = nextTasks.some(
+                (t: any) => t._id === focusedTask._id,
+              );
+              setTasks(
+                taskExists
+                  ? nextTasks.map((t: any) =>
+                      t._id === focusedTask._id ? { ...t, ...focusedTask } : t,
+                    )
+                  : [...nextTasks, focusedTask],
+              );
+            } else {
+              setTasks(nextTasks);
+            }
+          }
+        })
+        .catch((e) => console.error("Failed to load map data:", e))
+        .finally(() => setLoadingMap(false));
+      socketService.joinEvent(eventId);
+      socketService.onTaskStatusUpdated((data: any) => {
+        setTasks((prev) =>
+          prev.map((t) =>
+            t._id === data.taskId ? { ...t, status: data.status } : t,
+          ),
+        );
+      });
+      socketService.onTaskUpdated((data: any) => {
+        const updatedTask = data?.task;
+        if (!updatedTask?._id) return;
+        setTasks((prev) =>
+          prev.map((t) =>
+            t._id === updatedTask._id ? { ...t, ...updatedTask } : t,
+          ),
+        );
+      });
+      socketService.onTaskDeleted((data: any) => {
+        setTasks((prev) => prev.filter((t) => t._id !== data.taskId));
+      });
+      return () => {
+        socketService.leaveEvent(eventId);
+        socketService.off("task:status-updated");
+        socketService.off("task:updated");
+        socketService.off("task:deleted");
+      };
+    }, [eventId, taskId]),
+  );
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const scaleRef = useRef(1);
@@ -119,7 +211,7 @@ export default function MapView_Staff() {
         }
       },
 
-      // txRef/tyRef are always current from setPan calls — nothing extra needed
+      // txRef/tyRef are always current from setPan calls â€” nothing extra needed
       onPanResponderRelease: () => {
         pinchInitDist.current = null;
       },
@@ -145,7 +237,19 @@ export default function MapView_Staff() {
         <Text style={styles.headerTitle}>
           {"B\u1ea3n \u0111\u1ed3 nhi\u1ec7m v\u1ee5"}
         </Text>
-        <NotificationIcon color="#1F2937" />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Notification")}
+          style={{ position: "relative" }}
+        >
+          <NotificationIcon color="#1F2937" />
+          {unreadCount > 0 && (
+            <View style={styles.notifBadge}>
+              <Text style={styles.notifBadgeText}>
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* Map container */}
@@ -168,15 +272,67 @@ export default function MapView_Staff() {
             ]}
           >
             <ImageBackground
-              source={{ uri: "https://picsum.photos/900/700" }}
+              source={
+                mapImageUrl
+                  ? { uri: mapImageUrl }
+                  : require("../../assets/bgSplash.png")
+              }
               style={styles.mapImage}
               imageStyle={{ borderRadius: 20 }}
             >
-              {/* Fixed pin — travels with the map */}
-              <View style={[styles.markerWrap, { left: PIN_X, top: PIN_Y }]}>
-                <View style={styles.markerRing} />
-                <MapPin size={38} color="#7C3AED" fill="#7C3AED" />
-              </View>
+              {loadingMap && (
+                <ActivityIndicator
+                  size="large"
+                  color="#5F33E1"
+                  style={{ flex: 1 }}
+                />
+              )}
+              {visibleTasks.map((t) => {
+                const markerColor =
+                  MARKER_COLORS[t.status] ?? MARKER_COLORS.TODO;
+                const isFocusedTask = t._id === taskId;
+                const label = t.mapCoordinates?.label?.trim();
+                const hasLabel = isFocusedTask && !!label;
+                return (
+                  <View
+                    key={t._id}
+                    style={{
+                      position: "absolute",
+                      left: (t.mapCoordinates.x / 100) * IMAGE_WIDTH - 70,
+                      top:
+                        (t.mapCoordinates.y / 100) * IMAGE_HEIGHT -
+                        38 -
+                        (hasLabel ? 30 : 0),
+                      width: 140,
+                      alignItems: "center",
+                      zIndex: isFocusedTask ? 10 : 1,
+                    }}
+                  >
+                    {hasLabel && (
+                      <View style={styles.labelBubble}>
+                        <Text style={styles.labelBubbleText} numberOfLines={2}>
+                          {label}
+                        </Text>
+                      </View>
+                    )}
+                    <View
+                      style={{
+                        width: 38,
+                        height: 38,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {isFocusedTask && <View style={styles.markerRing} />}
+                      <MapPin
+                        size={38}
+                        color={markerColor}
+                        fill={markerColor}
+                      />
+                    </View>
+                  </View>
+                );
+              })}
             </ImageBackground>
           </Animated.View>
         </View>
@@ -247,7 +403,6 @@ const styles = StyleSheet.create({
     width: IMAGE_WIDTH,
     height: IMAGE_HEIGHT,
     borderRadius: 20,
-    overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -261,14 +416,14 @@ const styles = StyleSheet.create({
   mapImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 20,
+    overflow: "hidden",
   },
 
-  markerWrap: {
+  markerContainer: {
     position: "absolute",
-    width: 38,
-    height: 38,
     alignItems: "center",
-    justifyContent: "center",
+    width: 140,
   },
   markerRing: {
     position: "absolute",
@@ -278,6 +433,21 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(124,58,237,0.18)",
     top: -7,
     left: -7,
+  },
+  labelBubble: {
+    backgroundColor: "rgba(17,24,39,0.92)",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 4,
+    maxWidth: 140,
+  },
+  labelBubbleText: {
+    color: "#FFF",
+    fontSize: 11,
+    fontFamily: "LexendDeca_400Regular",
+    textAlign: "center",
+    lineHeight: 15,
   },
 
   zoomControls: {
@@ -337,5 +507,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "LexendDeca_700Bold",
     color: "#FFFFFF",
+  },
+  notifBadge: {
+    position: "absolute",
+    top: -4,
+    right: -6,
+    backgroundColor: "#EF4444",
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  notifBadgeText: {
+    color: "#FFF",
+    fontSize: 10,
+    fontWeight: "700",
   },
 });

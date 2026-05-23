@@ -10,6 +10,24 @@ import {
 import { View, ActivityIndicator, Animated } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  registerPushToken,
+  setupNotificationResponseListener,
+} from "./utils/pushNotifications";
+import { socketService } from "./services/socketService";
+import { SocketNotificationProvider } from "./context/SocketNotificationContext";
+import * as Notifications from "expo-notifications";
+
+// Show all foreground notifications as alerts
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 // --- THEME TRONG SUỐT TỪ NHÁNH MAIN ---
 const AppTheme = {
@@ -29,10 +47,11 @@ import EventsTasks_Org from "./screens/organizer/EventsTasks";
 import BottomTab from "./components/BottomTab";
 import TaskDetailScreen from "./screens/organizer/TaskDetail";
 import MapEditorScreen from "./screens/organizer/AddLocation";
-import CreateEvent from "./screens/CreateEvent";
+import CreateEvent from "./screens/organizer/CreateEvent";
 import TaskDetailStaff from "./screens/staff/TaskDetail";
 import MapViewStaff from "./screens/staff/MapView";
 import MemberList from "./screens/organizer/MemberList";
+import AddTask from "./screens/organizer/AddTask";
 import MapList_Staff from "./screens/staff/MapList";
 import SettingScreen from "./screens/common/SettingScreen";
 
@@ -124,6 +143,7 @@ function MainTabs() {
 }
 
 export default function App() {
+  const navigationRef = useRef<any>(null);
   const [fontsLoaded] = useFonts({
     LexendDeca_400Regular,
     LexendDeca_700Bold,
@@ -132,11 +152,41 @@ export default function App() {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
 
   useEffect(() => {
+    // Create default Android notification channel
+    if (require("react-native").Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "Thông báo",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#6366F1",
+      }).catch(() => {});
+    }
+
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (token) {
+          // Dùng decode thủ công JWT payload để kiểm tra expiry (không dùng thư viện)
+          try {
+            const parts = token.split(".");
+            if (parts.length === 3) {
+              const payload = JSON.parse(
+                atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")),
+              );
+              const exp = payload.exp;
+              if (exp && Date.now() / 1000 > exp) {
+                // Token hết hạn
+                await AsyncStorage.multiRemove(["userToken", "userData"]);
+                setInitialRoute("Start");
+                return;
+              }
+            }
+          } catch {
+            // Nếu không decode được, vẫn giữ token cũ
+          }
           setInitialRoute("Main");
+          registerPushToken();
+          socketService.connect();
         } else {
           setInitialRoute("Start");
         }
@@ -145,6 +195,18 @@ export default function App() {
       }
     };
     checkLoginStatus();
+  }, []);
+
+  useEffect(() => {
+    const cleanupResponse = setupNotificationResponseListener(
+      (screen, params) => {
+        navigationRef.current?.navigate(screen, params);
+      },
+    );
+
+    return () => {
+      cleanupResponse();
+    };
   }, []);
 
   if (!fontsLoaded || initialRoute === null) {
@@ -156,42 +218,49 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer theme={AppTheme}>
-      <Stack.Navigator
-        initialRouteName={initialRoute}
-        screenOptions={{
-          headerShown: false,
-          animation: "slide_from_right",
-          animationDuration: 280,
-        }}
-      >
-        {/* Flow khởi tạo */}
-        <Stack.Screen name="Start" component={StartScreen} />
-        <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
+    <SocketNotificationProvider>
+      <NavigationContainer ref={navigationRef} theme={AppTheme}>
+        <Stack.Navigator
+          initialRouteName={initialRoute}
+          screenOptions={{
+            headerShown: false,
+            animation: "slide_from_right",
+            animationDuration: 280,
+          }}
+        >
+          {/* Flow khởi tạo */}
+          <Stack.Screen name="Start" component={StartScreen} />
+          <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
 
-        {/* Flow Xác thực (Auth) */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+          {/* Flow Xác thực (Auth) */}
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
+          />
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
-        {/* Màn hình chính sau khi đăng nhập thành công */}
-        <Stack.Screen name="Main" component={MainTabs} />
+          {/* Màn hình chính sau khi đăng nhập thành công */}
+          <Stack.Screen name="Main" component={MainTabs} />
 
-        {/* Các màn hình chi tiết & Organizer (Gộp từ 2 nhánh) */}
-        <Stack.Screen name="EventDetail" component={EventDetailScreen} />
-        <Stack.Screen name="Notification" component={NotificationScreen} />
-        <Stack.Screen name="Account" component={AccountScreen} />
+          {/* Các màn hình chi tiết & Organizer (Gộp từ 2 nhánh) */}
+          <Stack.Screen name="EventDetail" component={EventDetailScreen} />
+          <Stack.Screen name="Notification" component={NotificationScreen} />
+          <Stack.Screen name="Account" component={AccountScreen} />
 
-        {/* Màn hình từ nhánh main */}
-        <Stack.Screen name="EventsTasks_Org" component={EventsTasks_Org} />
-        <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
-        <Stack.Screen name="TaskDetailStaff" component={TaskDetailStaff} />
-        <Stack.Screen name="MapViewStaff" component={MapViewStaff} />
-        <Stack.Screen name="MapEditor" component={MapEditorScreen} />
-        <Stack.Screen name="MemberList" component={MemberList} />
-        <Stack.Screen name="CreateEvent" component={CreateEvent} />
-      </Stack.Navigator>
-    </NavigationContainer>
+          {/* Màn hình từ nhánh main */}
+          <Stack.Screen name="EventsTasks_Org" component={EventsTasks_Org} />
+          <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
+          <Stack.Screen name="TaskDetailStaff" component={TaskDetailStaff} />
+          <Stack.Screen name="MapViewStaff" component={MapViewStaff} />
+          <Stack.Screen name="MapEditor" component={MapEditorScreen} />
+          <Stack.Screen name="MemberList" component={MemberList} />
+          <Stack.Screen name="TodayTask" component={TodayTask} />
+          <Stack.Screen name="CreateEvent" component={CreateEvent} />
+          <Stack.Screen name="AddTask" component={AddTask} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SocketNotificationProvider>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,9 @@ import {
   TextInput,
   ScrollView,
   Dimensions,
+  Alert,
+  ActivityIndicator,
+  Modal,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,10 +27,14 @@ import {
   Camera,
   Shield,
   ClipboardList,
+  Trash2,
 } from "lucide-react-native";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { ArrowIcon, NotificationIcon } from "../../components/Icons";
+import { taskService } from "../../services/taskService";
+import { eventService } from "../../services/eventService";
+import { X } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -40,17 +47,48 @@ const taskIcons: any = {
   management: ClipboardList,
 };
 
-const taskOptions = [
-  { key: "logistics", label: "Nhóm khu A" },
-  { key: "technical", label: "Nhóm kỹ thuật" },
-  { key: "media", label: "Media" },
-  { key: "security", label: "An ninh" },
-  { key: "support", label: "Hỗ trợ" },
-  { key: "management", label: "Quản lý" },
+const ICON_INDEX_KEYS = [
+  "logistics",
+  "technical",
+  "media",
+  "security",
+  "support",
+  "management",
 ];
 
-function getGroupKeyFromLabel(label?: string) {
-  return taskOptions.find((item) => item.label === label)?.key || "logistics";
+function findGroupKey(
+  groupValue: any,
+  options: { key: string; label: string; iconKey?: string }[],
+) {
+  if (!groupValue) return "";
+  if (typeof groupValue === "object") {
+    if (groupValue._id && options.some((item) => item.key === groupValue._id)) {
+      return groupValue._id;
+    }
+    if (groupValue.name) {
+      return (
+        options.find((item) => item.label === groupValue.name)?.key ||
+        groupValue._id ||
+        groupValue.name
+      );
+    }
+  }
+  if (typeof groupValue === "string") {
+    return (
+      options.find(
+        (item) => item.key === groupValue || item.label === groupValue,
+      )?.key || groupValue
+    );
+  }
+  return "";
+}
+
+function getGroupDisplayName(groupValue: any) {
+  if (!groupValue) return "";
+  if (typeof groupValue === "object") {
+    return groupValue.name || groupValue.label || "";
+  }
+  return String(groupValue);
 }
 
 function parseDate(value: string) {
@@ -68,211 +106,623 @@ function formatDate(date: Date) {
   return `${day}/${month}/${year}`;
 }
 
+function formatTime(date: Date) {
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const h = hours % 12 || 12;
+  return `${h}:${minutes} ${ampm}`;
+}
+
 export default function TaskDetailScreen({ route }: { route?: any }) {
-  // Lấy dữ liệu task truyền sang từ màn hình trước (nếu không có thì dùng giá trị mặc định ban đầu)
   const navigation = useNavigation<any>();
+  const taskId: string | undefined = route?.params?.taskId;
   const taskData = route?.params?.task;
 
-  const [group, setGroup] = useState(getGroupKeyFromLabel(taskData?.group));
-  const [taskName, setTaskName] = useState(taskData?.title || "Kê bàn");
-  const [description, setDescription] = useState(
-    taskData?.description ||
-      "Sinh viên tình nguyện thực hiện việc kê bàn theo đúng khu vực quy định, số lượng 100 bàn.",
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [eventId, setEventId] = useState<string>(
+    typeof taskData?.event === "string"
+      ? taskData.event
+      : taskData?.event?._id || "",
   );
+  const [assignees, setAssignees] = useState<string[]>(
+    taskData?.assignees?.map((a: any) => a._id || a) || [],
+  );
+  const [eventMembers, setEventMembers] = useState<any[]>([]);
+  const [showAssigneePicker, setShowAssigneePicker] = useState(false);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [group, setGroup] = useState("");
+  const [groupDisplayName, setGroupDisplayName] = useState(
+    getGroupDisplayName(taskData?.group),
+  );
+  const [taskName, setTaskName] = useState(taskData?.title || "");
+  const [description, setDescription] = useState(taskData?.description || "");
   const [startDate, setStartDate] = useState<Date>(
-    taskData?.startDate ? parseDate(taskData.startDate) : new Date(2026, 4, 1),
+    taskData?.startTime
+      ? new Date(taskData.startTime)
+      : taskData?.startDate
+        ? parseDate(taskData.startDate)
+        : new Date(),
   );
   const [endDate, setEndDate] = useState<Date>(
-    taskData?.endDate ? parseDate(taskData.endDate) : new Date(2026, 4, 2),
+    taskData?.endTime
+      ? new Date(taskData.endTime)
+      : taskData?.endDate
+        ? parseDate(taskData.endDate)
+        : new Date(),
   );
   const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
-
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(false);
-  const CurrentIcon = taskIcons[group] || Package;
+  const [showAddGroup, setShowAddGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupIcon, setNewGroupIcon] = useState("");
+  const [apiGroups, setApiGroups] = useState<
+    { key: string; label: string; iconKey: string }[]
+  >([]);
+  const [customGroups, setCustomGroups] = useState<
+    { key: string; label: string; iconKey: string }[]
+  >([]);
+
+  const allGroups = [...apiGroups, ...customGroups];
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!taskId) return;
+      setLoading(true);
+      taskService
+        .getTaskDetail(taskId)
+        .then(async (res) => {
+          if (!res?.data) return;
+          const t = res.data;
+          const nextEventId =
+            typeof t.event === "string" ? t.event : t.event?._id || "";
+          let nextApiGroups: { key: string; label: string; iconKey: string }[] =
+            [];
+
+          if (nextEventId) {
+            setEventId(nextEventId);
+            try {
+              const eventRes = await eventService.getEventDetail(nextEventId);
+              nextApiGroups = (eventRes?.data?.groups ?? []).map(
+                (item: any) => ({
+                  key: item._id,
+                  label: item.name,
+                  iconKey: ICON_INDEX_KEYS[item.iconIndex ?? 0] ?? "logistics",
+                }),
+              );
+              setApiGroups(nextApiGroups);
+            } catch {
+              setApiGroups([]);
+            }
+          }
+
+          setTaskName(t.title || "");
+          setDescription(t.description || "");
+          setGroupDisplayName(getGroupDisplayName(t.group));
+          setGroup(findGroupKey(t.group, nextApiGroups));
+          if (t.startTime) setStartDate(new Date(t.startTime));
+          if (t.endTime) setEndDate(new Date(t.endTime));
+          if (t.assignees) {
+            setAssignees(t.assignees.map((a: any) => a._id || a));
+          }
+        })
+        .finally(() => setLoading(false));
+    }, [taskId]),
+  );
+
+  const loadEventMembers = async () => {
+    if (!eventId) return;
+    setLoadingMembers(true);
+    try {
+      const res = await eventService.getEventDetail(eventId);
+      const data = res.data || res;
+      const accepted = (data.members || []).filter(
+        (m: any) => m.status === "ACCEPTED",
+      );
+      setEventMembers(accepted);
+    } catch {
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  const toggleAssignee = (userId: string) => {
+    setAssignees((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
+  };
+
+  const addCustomGroup = () => {
+    const trimmed = newGroupName.trim();
+    if (!trimmed) return;
+    const key = `custom_${Date.now()}`;
+    setCustomGroups([
+      ...customGroups,
+      { key, label: trimmed, iconKey: newGroupIcon || "logistics" },
+    ]);
+    taskIcons[key] = taskIcons[newGroupIcon];
+    setGroup(key);
+    setNewGroupName("");
+    setNewGroupIcon("logistics");
+    setShowAddGroup(false);
+    setOpenDropdown(false);
+  };
+
+  const handleSave = async () => {
+    if (!taskId) return;
+    if (!group) {
+      Alert.alert("Thiếu thông tin", "Vui lòng chọn hoặc tạo nhóm.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const selectedGroup = allGroups.find((g) => g.key === group);
+      const isObjectId = /^[a-f\d]{24}$/i.test(group);
+      const res = await taskService.updateTask(taskId, {
+        title: taskName.trim(),
+        group: isObjectId ? group : selectedGroup?.label || group,
+        description: description.trim() || undefined,
+        startTime: startDate.toISOString(),
+        endTime: endDate.toISOString(),
+      });
+      if (res?.data?._id || res?.success !== false) {
+        await taskService.assignTask(taskId, { assignees });
+        navigation.goBack();
+      } else {
+        Alert.alert("Lỗi", res?.message || "Không thể lưu nhiệm vụ");
+      }
+    } catch {
+      Alert.alert("Lỗi", "Lỗi kết nối server");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (!taskId) return;
+    Alert.alert("Xác nhận", "Bạn có chắc muốn xóa nhiệm vụ này?", [
+      { text: "Huỷ", style: "cancel" },
+      {
+        text: "Xóa",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await taskService.deleteTask(taskId);
+            navigation.goBack();
+          } catch {
+            Alert.alert("Lỗi", "Không thể xóa nhiệm vụ");
+          }
+        },
+      },
+    ]);
+  };
+
+  const CurrentIcon =
+    taskIcons[allGroups.find((item) => item.key === group)?.iconKey ?? group] ||
+    Package;
   const groupLabel =
-    taskOptions.find((item) => item.key === group)?.label ||
-    taskData?.group ||
-    "Nhóm khu A";
+    allGroups.find((item) => item.key === group)?.label ||
+    groupDisplayName ||
+    "Chọn nhóm...";
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* 1. Header Bar */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <View style={{ transform: [{ scaleX: -1 }] }}>
-            <ArrowIcon color="#1F2937" size={22} />
-          </View>
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Nhiệm vụ của sự kiện</Text>
-
-        <NotificationIcon color="#1F2937" />
-      </View>
-
-      {/* Toàn bộ nội dung cuộn */}
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 2. Chọn Nhóm (Dropdown) */}
-        <TouchableOpacity
-          style={styles.cardRow}
-          onPress={() => setOpenDropdown(!openDropdown)}
+      {loading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <View style={[styles.iconContainer, { backgroundColor: "#FFEBF0" }]}>
-            <CurrentIcon size={20} color="#FF5487" />
-          </View>
-
-          <View style={styles.cardBody}>
-            <Text style={styles.label}>Nhóm</Text>
-
-            <Text style={styles.valueText}>{groupLabel}</Text>
-          </View>
-
-          <ChevronDown size={20} color="#1A1D1E" />
-        </TouchableOpacity>
-
-        {/* Options */}
-        {openDropdown && (
-          <View style={styles.dropdownContainer}>
-            {taskOptions.map((item) => {
-              const IconComponent = taskIcons[item.key];
-
-              return (
-                <TouchableOpacity
-                  key={item.key}
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    setGroup(item.key);
-                    setOpenDropdown(false);
-                  }}
-                >
-                  <IconComponent size={18} color="#5F33E1" />
-
-                  <Text style={styles.dropdownText}>{item.label}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
-
-        {/* 3. Tên Nhiệm vụ (Input) */}
-        <View style={styles.cardField}>
-          <Text style={styles.label}>Nhiệm vụ</Text>
-          <TextInput
-            style={styles.input}
-            value={taskName}
-            onChangeText={setTaskName}
-          />
+          <ActivityIndicator size="large" color="#5F33E1" />
         </View>
+      ) : (
+        <>
+          {/* 1. Header Bar */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <View style={{ transform: [{ scaleX: -1 }] }}>
+                <ArrowIcon color="#1F2937" size={22} />
+              </View>
+            </TouchableOpacity>
 
-        {/* 4. Mô tả (Multi-line Input) */}
-        <View style={styles.cardField}>
-          <Text style={styles.label}>Mô tả</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={3}
-          />
-        </View>
+            <Text style={styles.title}>Nhiệm vụ của sự kiện</Text>
 
-        {/* 5. Ngày bắt đầu */}
-        <TouchableOpacity
-          style={styles.cardRow}
-          onPress={() => setShowStartPicker(true)}
-        >
-          <View style={styles.cardLeftIconRow}>
-            <Calendar size={24} color="#5F33E1" />
-            <View style={styles.cardBodyPadding}>
-              <Text style={styles.label}>Ngày bắt đầu</Text>
-              <Text style={styles.valueText}>{formatDate(startDate)}</Text>
-            </View>
+            <TouchableOpacity onPress={handleDelete}>
+              <Trash2 size={22} color="#EF4444" />
+            </TouchableOpacity>
           </View>
-          <ChevronDown size={20} color="#1A1D1E" />
-        </TouchableOpacity>
 
-        {showStartPicker && (
-          <DateTimePicker
-            testID="startDatePicker"
-            value={startDate}
-            mode="date"
-            display="default"
-            onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-              setShowStartPicker(false);
-              if (selectedDate) {
-                setStartDate(selectedDate);
-              }
-            }}
-          />
-        )}
-
-        {/* 6. Ngày kết thúc */}
-        <TouchableOpacity
-          style={styles.cardRow}
-          onPress={() => setShowEndPicker(true)}
-        >
-          <View style={styles.cardLeftIconRow}>
-            <Calendar size={24} color="#5F33E1" />
-            <View style={styles.cardBodyPadding}>
-              <Text style={styles.label}>Ngày kết thúc</Text>
-              <Text style={styles.valueText}>{formatDate(endDate)}</Text>
-            </View>
-          </View>
-          <ChevronDown size={20} color="#1A1D1E" />
-        </TouchableOpacity>
-
-        {showEndPicker && (
-          <DateTimePicker
-            testID="endDatePicker"
-            value={endDate}
-            mode="date"
-            display="default"
-            onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-              setShowEndPicker(false);
-              if (selectedDate) {
-                setEndDate(selectedDate);
-              }
-            }}
-          />
-        )}
-
-        {/* 7. Gắn vị trí thực hiện */}
-        <View style={styles.cardRowBtn}>
-          <View style={styles.cardLeftIconRow}>
-            <MapPin size={28} color="#5F33E1" />
-            <Text style={styles.rowTitle}>Gắn vị trí thực hiện</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.innerButton}
-            onPress={() => navigation.navigate("MapEditor")}
+          {/* Toàn bộ nội dung cuộn */}
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.innerButtonText}>Thêm vị trí</Text>
-          </TouchableOpacity>
-        </View>
+            {/* 2. Chọn Nhóm (Dropdown) */}
+            <TouchableOpacity
+              style={styles.cardRow}
+              onPress={() => setOpenDropdown(!openDropdown)}
+            >
+              <View
+                style={[styles.iconContainer, { backgroundColor: "#FFEBF0" }]}
+              >
+                <CurrentIcon size={20} color="#FF5487" />
+              </View>
 
-        {/* 8. Xem thành viên */}
-        <View style={styles.cardRowBtn}>
-          <View style={styles.cardLeftIconRow}>
-            <Users size={28} color="#5F33E1" />
+              <View style={styles.cardBody}>
+                <Text style={styles.label}>Nhóm</Text>
+
+                <Text style={styles.valueText}>{groupLabel}</Text>
+              </View>
+
+              <ChevronDown size={20} color="#1A1D1E" />
+            </TouchableOpacity>
+
+            {/* Options */}
+            {openDropdown && (
+              <View style={styles.dropdownContainer}>
+                {allGroups.map((item) => {
+                  const IconComponent =
+                    taskIcons[item.iconKey ?? item.key] || Package;
+                  return (
+                    <TouchableOpacity
+                      key={item.key}
+                      style={styles.dropdownItem}
+                      onPress={() => {
+                        setGroup(item.key);
+                        setOpenDropdown(false);
+                        setShowAddGroup(false);
+                      }}
+                    >
+                      <IconComponent size={18} color="#5F33E1" />
+                      <Text style={styles.dropdownText}>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+
+                {/* Divider */}
+                <View style={styles.dropdownDivider} />
+
+                {/* Add custom group */}
+                {!showAddGroup ? (
+                  <TouchableOpacity
+                    style={styles.dropdownItem}
+                    onPress={() => setShowAddGroup(true)}
+                  >
+                    <View style={styles.addGroupIconCircle}>
+                      <Text style={styles.addGroupPlus}>+</Text>
+                    </View>
+                    <Text
+                      style={[
+                        styles.dropdownText,
+                        { color: "#5F33E1", fontWeight: "600" },
+                      ]}
+                    >
+                      Thêm nhóm mới
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.addGroupForm}>
+                    <TextInput
+                      style={styles.addGroupInput}
+                      placeholder="Tên nhóm..."
+                      placeholderTextColor="#B0AEC8"
+                      value={newGroupName}
+                      onChangeText={setNewGroupName}
+                      autoFocus
+                    />
+                    {/* Icon picker */}
+                    <Text style={styles.addGroupIconLabel}>Chọn icon:</Text>
+                    <View style={styles.iconPickerRow}>
+                      {Object.entries(taskIcons)
+                        .filter(([k]) => !k.startsWith("custom_"))
+                        .map(([iconKey, IconComp]: [string, any]) => (
+                          <TouchableOpacity
+                            key={iconKey}
+                            style={[
+                              styles.iconPickerItem,
+                              newGroupIcon === iconKey &&
+                                styles.iconPickerItemActive,
+                            ]}
+                            onPress={() => setNewGroupIcon(iconKey)}
+                          >
+                            <IconComp
+                              size={20}
+                              color={
+                                newGroupIcon === iconKey ? "#fff" : "#5F33E1"
+                              }
+                            />
+                          </TouchableOpacity>
+                        ))}
+                    </View>
+                    {/* Confirm / Cancel */}
+                    <View style={styles.addGroupActions}>
+                      <TouchableOpacity
+                        style={styles.addGroupCancel}
+                        onPress={() => {
+                          setShowAddGroup(false);
+                          setNewGroupName("");
+                        }}
+                      >
+                        <Text style={styles.addGroupCancelText}>Huỷ</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.addGroupConfirm}
+                        onPress={addCustomGroup}
+                      >
+                        <Text style={styles.addGroupConfirmText}>Thêm</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* 3. Tên Nhiệm vụ (Input) */}
+            <View style={styles.cardField}>
+              <Text style={styles.label}>Nhiệm vụ</Text>
+              <TextInput
+                style={styles.input}
+                value={taskName}
+                onChangeText={setTaskName}
+              />
+            </View>
+
+            {/* 4. Mô tả (Multi-line Input) */}
+            <View style={styles.cardField}>
+              <Text style={styles.label}>Mô tả</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                value={description}
+                onChangeText={setDescription}
+                multiline
+                numberOfLines={3}
+              />
+            </View>
+
+            {/* 5. Ngày bắt đầu */}
+            <View style={styles.cardRow}>
+              <View style={styles.cardLeftIconRow}>
+                <Calendar size={24} color="#5F33E1" />
+                <View style={styles.cardBodyPadding}>
+                  <Text style={styles.label}>Ngày bắt đầu</Text>
+                  <View style={{ flexDirection: "row", gap: 12 }}>
+                    <TouchableOpacity onPress={() => setShowStartPicker(true)}>
+                      <Text style={[styles.valueText, { color: "#5F33E1" }]}>
+                        {formatDate(startDate)}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setShowStartTimePicker(true)}
+                    >
+                      <Text style={[styles.valueText, { color: "#5F33E1" }]}>
+                        {formatTime(startDate)}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <ChevronDown size={20} color="#1A1D1E" />
+            </View>
+
+            {showStartPicker && (
+              <DateTimePicker
+                testID="startDatePicker"
+                value={startDate}
+                mode="date"
+                display="default"
+                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                  setShowStartPicker(false);
+                  if (selectedDate) {
+                    setStartDate(selectedDate);
+                  }
+                }}
+              />
+            )}
+
+            {showStartTimePicker && (
+              <DateTimePicker
+                value={startDate}
+                mode="time"
+                display="default"
+                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                  setShowStartTimePicker(false);
+                  if (selectedDate) {
+                    const merged = new Date(startDate);
+                    merged.setHours(
+                      selectedDate.getHours(),
+                      selectedDate.getMinutes(),
+                      0,
+                      0,
+                    );
+                    setStartDate(merged);
+                  }
+                }}
+              />
+            )}
+
+            {/* 6. Ngày kết thúc */}
+            <View style={styles.cardRow}>
+              <View style={styles.cardLeftIconRow}>
+                <Calendar size={24} color="#5F33E1" />
+                <View style={styles.cardBodyPadding}>
+                  <Text style={styles.label}>Ngày kết thúc</Text>
+                  <View style={{ flexDirection: "row", gap: 12 }}>
+                    <TouchableOpacity onPress={() => setShowEndPicker(true)}>
+                      <Text style={[styles.valueText, { color: "#5F33E1" }]}>
+                        {formatDate(endDate)}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setShowEndTimePicker(true)}
+                    >
+                      <Text style={[styles.valueText, { color: "#5F33E1" }]}>
+                        {formatTime(endDate)}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <ChevronDown size={20} color="#1A1D1E" />
+            </View>
+
+            {showEndPicker && (
+              <DateTimePicker
+                testID="endDatePicker"
+                value={endDate}
+                mode="date"
+                display="default"
+                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                  setShowEndPicker(false);
+                  if (selectedDate) {
+                    setEndDate(selectedDate);
+                  }
+                }}
+              />
+            )}
+
+            {showEndTimePicker && (
+              <DateTimePicker
+                value={endDate}
+                mode="time"
+                display="default"
+                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                  setShowEndTimePicker(false);
+                  if (selectedDate) {
+                    const merged = new Date(endDate);
+                    merged.setHours(
+                      selectedDate.getHours(),
+                      selectedDate.getMinutes(),
+                      0,
+                      0,
+                    );
+                    setEndDate(merged);
+                  }
+                }}
+              />
+            )}
+
+            {/* 7. Gắn vị trí thực hiện */}
+            <View style={styles.cardRowBtn}>
+              <View style={styles.cardLeftIconRow}>
+                <MapPin size={28} color="#5F33E1" />
+                <Text style={styles.rowTitle}>Gắn vị trí thực hiện</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.innerButton}
+                onPress={() => navigation.navigate("MapEditor", { taskId })}
+              >
+                <Text style={styles.innerButtonText}>Thêm vị trí</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* 8. Phân công thành viên */}
+            <View style={styles.cardRowBtn}>
+              <View style={styles.cardLeftIconRow}>
+                <Users size={28} color="#5F33E1" />
+                <View style={{ marginLeft: 12, flex: 1 }}>
+                  <Text style={styles.rowTitle}>Phân công</Text>
+                  {assignees.length > 0 && (
+                    <Text
+                      style={{ fontSize: 12, color: "#8A8D9F", marginTop: 2 }}
+                    >
+                      {assignees.length} thành viên đã chọn
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.innerButton}
+                onPress={() => {
+                  loadEventMembers();
+                  setShowAssigneePicker(true);
+                }}
+              >
+                <Text style={styles.innerButtonText}>Chọn</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+
+          {/* 9. Nút Lưu cố định ở đáy màn hình */}
+          <View style={styles.bottomAction}>
+            <TouchableOpacity
+              style={[styles.saveButton, saving && { opacity: 0.7 }]}
+              disabled={saving}
+              onPress={handleSave}
+            >
+              <Text style={styles.saveButtonText}>
+                {saving ? "Đang lưu..." : "Lưu"}
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.innerButton}
-            onPress={() => navigation.navigate("MemberList")}
-          >
-            <Text style={styles.innerButtonText}>Xem thành viên</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </>
+      )}
 
-      {/* 9. Nút Lưu cố định ở đáy màn hình */}
-      <View style={styles.bottomAction}>
-        <TouchableOpacity style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Lưu</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Assignee Picker Modal */}
+      <Modal visible={showAssigneePicker} animationType="slide" transparent>
+        <View style={styles.pickerOverlay}>
+          <View style={styles.pickerSheet}>
+            <View style={styles.pickerHeader}>
+              <Text style={styles.pickerTitle}>Chọn thành viên phân công</Text>
+              <TouchableOpacity onPress={() => setShowAssigneePicker(false)}>
+                <X size={22} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+            {loadingMembers ? (
+              <ActivityIndicator
+                color="#5F33E1"
+                style={{ marginVertical: 24 }}
+              />
+            ) : eventMembers.length === 0 ? (
+              <Text style={styles.noMemberText}>
+                {eventId
+                  ? "Chưa có thành viên đã xác nhận trong sự kiện."
+                  : "Không tìm thấy sự kiện."}
+              </Text>
+            ) : (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={{ maxHeight: 360 }}
+              >
+                {eventMembers.map((m: any) => {
+                  const userId = m.user?._id;
+                  const name =
+                    m.user?.fullName || m.user?.email || "Thành viên";
+                  const selected = assignees.includes(userId);
+                  return (
+                    <TouchableOpacity
+                      key={userId}
+                      style={styles.memberPickerRow}
+                      onPress={() => toggleAssignee(userId)}
+                    >
+                      <View
+                        style={[
+                          styles.checkCircle,
+                          selected && styles.checkCircleActive,
+                        ]}
+                      >
+                        {selected && <Text style={styles.checkMark}>✓</Text>}
+                      </View>
+                      <Text style={styles.memberPickerName}>{name}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            )}
+            <TouchableOpacity
+              style={styles.pickerConfirmBtn}
+              onPress={() => setShowAssigneePicker(false)}
+            >
+              <Text style={styles.pickerConfirmText}>
+                Xác nhận ({assignees.length})
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -417,12 +867,13 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 0,
     right: 0,
+    flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
   },
   saveButton: {
+    flex: 1,
     backgroundColor: "#5F33E1",
-    width: "100%",
     height: 54,
     borderRadius: 27,
     justifyContent: "center",
@@ -436,6 +887,20 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: "#FFFFFF",
     fontSize: 18,
+    fontWeight: "700",
+  },
+  deleteButton: {
+    height: 54,
+    paddingHorizontal: 24,
+    borderRadius: 27,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FEE2E2",
+    marginRight: 12,
+  },
+  deleteButtonText: {
+    color: "#EF4444",
+    fontSize: 16,
     fontWeight: "700",
   },
   dropdownContainer: {
@@ -457,5 +922,180 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 15,
     color: "#1A1D1E",
+  },
+
+  dropdownDivider: {
+    height: 1,
+    backgroundColor: "#F3F4F6",
+    marginHorizontal: 16,
+    marginVertical: 4,
+  },
+
+  addGroupIconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#5F33E1",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  addGroupPlus: {
+    fontSize: 18,
+    color: "#5F33E1",
+    lineHeight: 22,
+  },
+
+  addGroupForm: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    paddingTop: 4,
+  },
+
+  addGroupInput: {
+    borderWidth: 1,
+    borderColor: "#DDD8F8",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+    color: "#1A1D1E",
+    marginBottom: 10,
+  },
+
+  addGroupIconLabel: {
+    fontSize: 12,
+    color: "#8A8D9F",
+    marginBottom: 8,
+  },
+
+  iconPickerRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 12,
+    flexWrap: "wrap",
+  },
+
+  iconPickerItem: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#DDD8F8",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  iconPickerItemActive: {
+    backgroundColor: "#5F33E1",
+    borderColor: "#5F33E1",
+  },
+
+  addGroupActions: {
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  addGroupCancel: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    alignItems: "center",
+  },
+
+  addGroupCancelText: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    fontWeight: "600",
+  },
+
+  addGroupConfirm: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: 10,
+    backgroundColor: "#5F33E1",
+    alignItems: "center",
+  },
+
+  addGroupConfirmText: {
+    fontSize: 14,
+  },
+
+  // Assignee picker
+  pickerOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  pickerSheet: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 36,
+  },
+  pickerHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  pickerTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1A1D1E",
+  },
+  noMemberText: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    textAlign: "center",
+    marginVertical: 24,
+  },
+  memberPickerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#D1D5DB",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  checkCircleActive: {
+    backgroundColor: "#5F33E1",
+    borderColor: "#5F33E1",
+  },
+  checkMark: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  memberPickerName: {
+    fontSize: 15,
+    color: "#1A1D1E",
+    fontWeight: "500",
+  },
+  pickerConfirmBtn: {
+    backgroundColor: "#5F33E1",
+    borderRadius: 28,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  pickerConfirmText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
   },
 });
