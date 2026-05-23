@@ -7,7 +7,12 @@ import {
   LexendDeca_400Regular,
   LexendDeca_700Bold,
 } from "@expo-google-fonts/lexend-deca";
-import { View, ActivityIndicator, Animated } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  Animated,
+  Platform,
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -18,7 +23,7 @@ import { socketService } from "./services/socketService";
 import { SocketNotificationProvider } from "./context/SocketNotificationContext";
 import * as Notifications from "expo-notifications";
 
-// Show all foreground notifications as alerts
+// Notification config
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -29,7 +34,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// --- THEME TRONG SUỐT TỪ NHÁNH MAIN ---
 const AppTheme = {
   ...DefaultTheme,
   colors: {
@@ -40,7 +44,7 @@ const AppTheme = {
   },
 };
 
-// --- CÁC MÀN HÌNH TỪ NHÁNH MAIN VÀ HEAD ---
+// Screens
 import HomeScreen from "./screens/common/HomeScreen";
 import TodayTask from "./screens/staff/TodayTask";
 import EventsTasks_Org from "./screens/organizer/EventsTasks";
@@ -54,12 +58,7 @@ import MemberList from "./screens/organizer/MemberList";
 import AddTask from "./screens/organizer/AddTask";
 import MapList_Staff from "./screens/staff/MapList";
 import SettingScreen from "./screens/common/SettingScreen";
-
-// --- CÁC MÀN HÌNH AUTH ---
-
 import ForgotPasswordScreen from "./screens/common/ForgotPasswordScreen";
-
-// --- CÁC MÀN HÌNH CHI TIẾT ---
 import EventDetailScreen from "./screens/organizer/EventDetailScreen";
 import AccountScreen from "./screens/common/AccountScreen";
 import WalkthroughScreen from "./screens/common/WalkthroughScreen";
@@ -72,7 +71,7 @@ import StartScreen from "./screens/common/StartScreen";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// --- HOC: HIỆU ỨNG ANIMATION TỪ NHÁNH MAIN ---
+/* ================= ANIMATION ================= */
 function withSlide<T extends object>(Component: React.ComponentType<T>) {
   return function SlideScreen(props: T) {
     const isFocused = useIsFocused();
@@ -83,6 +82,7 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
       if (isFocused) {
         translateX.setValue(60);
         opacity.setValue(0);
+
         Animated.parallel([
           Animated.timing(translateX, {
             toValue: 0,
@@ -95,12 +95,6 @@ function withSlide<T extends object>(Component: React.ComponentType<T>) {
             useNativeDriver: true,
           }),
         ]).start();
-      } else {
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 160,
-          useNativeDriver: true,
-        }).start();
       }
     }, [isFocused]);
 
@@ -116,8 +110,8 @@ const FadeHome = withSlide(HomeScreen);
 const FadeCalendar = withSlide(TodayTask);
 const FadeMapList = withSlide(MapList_Staff);
 const FadeSetting = withSlide(SettingScreen);
-// Nếu muốn các màn hình Org vào Tab, có thể tạo thêm FadeEventsTasksOrg = withSlide(EventsTasks_Org)
 
+/* ================= TAB ================= */
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -132,7 +126,6 @@ function MainTabs() {
           shadowOpacity: 0,
         },
       }}
-      sceneContainerStyle={{ backgroundColor: "transparent" }}
     >
       <Tab.Screen name="Home" component={FadeHome} />
       <Tab.Screen name="Calendar" component={FadeCalendar} />
@@ -142,74 +135,97 @@ function MainTabs() {
   );
 }
 
+/* ================= APP ================= */
 export default function App() {
   const navigationRef = useRef<any>(null);
+
   const [fontsLoaded] = useFonts({
     LexendDeca_400Regular,
     LexendDeca_700Bold,
   });
 
-  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+  const [initialRoute, setInitialRoute] = useState<string>("Start");
 
+  /* ================= LOGIN CHECK ================= */
   useEffect(() => {
-    // Create default Android notification channel
-    if (require("react-native").Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "Thông báo",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#6366F1",
-      }).catch(() => {});
-    }
+    let mounted = true;
 
-    const checkLoginStatus = async () => {
+    const timeout = setTimeout(() => {
+      if (initialRoute === "Start") {
+        console.log("⏱ fallback route Start");
+        setInitialRoute("Start");
+      }
+    }, 5000);
+
+    const checkLogin = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
-        if (token) {
-          // Dùng decode thủ công JWT payload để kiểm tra expiry (không dùng thư viện)
-          try {
-            const parts = token.split(".");
-            if (parts.length === 3) {
-              const payload = JSON.parse(
-                atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")),
-              );
-              const exp = payload.exp;
-              if (exp && Date.now() / 1000 > exp) {
-                // Token hết hạn
-                await AsyncStorage.multiRemove(["userToken", "userData"]);
-                setInitialRoute("Start");
-                return;
-              }
-            }
-          } catch {
-            // Nếu không decode được, vẫn giữ token cũ
-          }
-          setInitialRoute("Main");
-          registerPushToken();
-          socketService.connect();
-        } else {
+
+        if (!mounted) return;
+
+        if (!token) {
           setInitialRoute("Start");
+          return;
         }
-      } catch (error) {
+
+        // safe JWT decode
+        try {
+          const parts = token.split(".");
+          if (parts.length === 3) {
+            const base64 = parts[1]
+              .replace(/-/g, "+")
+              .replace(/_/g, "/");
+
+            const json = JSON.parse(atob(base64));
+            const exp = json.exp;
+
+            if (exp && Date.now() / 1000 > exp) {
+              await AsyncStorage.multiRemove([
+                "userToken",
+                "userData",
+              ]);
+              setInitialRoute("Start");
+              return;
+            }
+          }
+        } catch (e) {
+          console.log("JWT decode error:", e);
+        }
+
+        setInitialRoute("Main");
+
+        registerPushToken();
+
+        socketService.connect().catch(() => {
+          console.log("Socket ignored error");
+        });
+      } catch (e) {
+        console.log("Login check error:", e);
         setInitialRoute("Start");
       }
     };
-    checkLoginStatus();
-  }, []);
 
-  useEffect(() => {
-    const cleanupResponse = setupNotificationResponseListener(
-      (screen, params) => {
-        navigationRef.current?.navigate(screen, params);
-      },
-    );
+    checkLogin();
 
     return () => {
-      cleanupResponse();
+      mounted = false;
+      clearTimeout(timeout);
     };
   }, []);
 
-  if (!fontsLoaded || initialRoute === null) {
+  /* ================= NOTIFICATION ================= */
+  useEffect(() => {
+    const cleanup = setupNotificationResponseListener(
+      (screen, params) => {
+        navigationRef.current?.navigate(screen, params);
+      }
+    );
+
+    return cleanup;
+  }, []);
+
+  /* ================= LOADING ================= */
+  if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#5F33E1" />
@@ -217,6 +233,7 @@ export default function App() {
     );
   }
 
+  /* ================= UI ================= */
   return (
     <SocketNotificationProvider>
       <NavigationContainer ref={navigationRef} theme={AppTheme}>
@@ -225,31 +242,27 @@ export default function App() {
           screenOptions={{
             headerShown: false,
             animation: "slide_from_right",
-            animationDuration: 280,
           }}
         >
-          {/* Flow khởi tạo */}
+          {/* Init */}
           <Stack.Screen name="Start" component={StartScreen} />
           <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
 
-          {/* Flow Xác thực (Auth) */}
+          {/* Auth */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-          />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
-          {/* Màn hình chính sau khi đăng nhập thành công */}
+          {/* Main */}
           <Stack.Screen name="Main" component={MainTabs} />
 
-          {/* Các màn hình chi tiết & Organizer (Gộp từ 2 nhánh) */}
+          {/* Detail */}
           <Stack.Screen name="EventDetail" component={EventDetailScreen} />
           <Stack.Screen name="Notification" component={NotificationScreen} />
           <Stack.Screen name="Account" component={AccountScreen} />
 
-          {/* Màn hình từ nhánh main */}
+          {/* Extra */}
           <Stack.Screen name="EventsTasks_Org" component={EventsTasks_Org} />
           <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
           <Stack.Screen name="TaskDetailStaff" component={TaskDetailStaff} />

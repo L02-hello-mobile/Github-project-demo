@@ -36,12 +36,15 @@
           "color": "#6366F1",
           "defaultChannel": "default"
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ],
     "extra": {
       "eas": {
-        "projectId": "77ae8329-a93b-49d4-bdee-70df53c1c548"
+        "projectId": "1afef760-eb7f-4f19-898a-2a9a21ee78c7"
       }
-    }
+    },
+    "owner": "ngocquan236"
   }
 }

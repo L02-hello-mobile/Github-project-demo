@@ -19,6 +19,7 @@ export const apiCall = async (
 
     const headers: HeadersInit = {
       "Content-Type": "application/json",
+      "Accept": "application/json", // QUAN TRỌNG CHO APK
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
@@ -65,6 +66,7 @@ export const apiUpload = async (endpoint: string, formData: FormData) => {
   try {
     const token = await AsyncStorage.getItem("userToken");
     const headers: HeadersInit = {
+      "Accept": "application/json", // QUAN TRỌNG CHO APK
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       // KHÔNG set Content-Type — fetch tự thêm multipart boundary
     };
