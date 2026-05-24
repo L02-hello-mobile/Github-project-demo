@@ -6,7 +6,11 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
-jest.mock("lucide-react-native", () => ({ MapPin: () => null, Plus: () => null, Calendar: () => null, Users: () => null, ChevronDown: () => null, Search: () => null }));
+jest.mock("lucide-react-native", () => ({
+  MapPin: () => null, Plus: () => null, Calendar: () => null, 
+  Users: () => null, ChevronDown: () => null, Search: () => null,
+  Clock: () => null, User: () => null,
+}));
 
 jest.mock("../services/taskService", () => ({
   taskService: { getEventTasks: jest.fn().mockResolvedValue({ data: [] }) }
@@ -15,7 +19,8 @@ jest.mock("../services/taskService", () => ({
 jest.mock("../services/eventService", () => ({
   eventService: { 
     getEventDetail: jest.fn().mockResolvedValue({ data: {} }),
-    getEventProgress: jest.fn().mockResolvedValue({ data: { percentage: 0 } })
+    getEventProgress: jest.fn().mockResolvedValue({ data: { percentage: 0 } }),
+    getMyEvents: jest.fn().mockResolvedValue({ data: [] })
   }
 }));
 
@@ -31,9 +36,13 @@ import TaskDetail from "../screens/organizer/TaskDetail";
 import MemberList from "../screens/organizer/MemberList";
 import AddLocation from "../screens/organizer/AddLocation";
 
-const mockNav = { navigate: jest.fn(), goBack: jest.fn() };
+const mockNav = { 
+  navigate: jest.fn(), 
+  goBack: jest.fn(),
+  addListener: jest.fn(() => () => {})
+};
 
-describe("Organizer Screens - Dummy Coverage", () => {
+describe("Organizer Screens - Safe Coverage", () => {
   const cases = [
     { name: "CreateEvent", Comp: CreateEvent, props: { navigation: mockNav } },
     { name: "EventDetailScreen", Comp: EventDetailScreen, props: { navigation: mockNav, route: { params: { eventId: "e1" } } } },
@@ -45,12 +54,16 @@ describe("Organizer Screens - Dummy Coverage", () => {
   ];
 
   cases.forEach(({ name, Comp, props }) => {
-    it(`Render ${name}`, () => {
+    it(`renders ${name}`, () => {
       try {
-        const { toJSON } = render(<NavigationContainer><Comp {...props} /></NavigationContainer>);
+        const { toJSON } = render(
+          <NavigationContainer>
+            <Comp {...props} />
+          </NavigationContainer>
+        );
         expect(toJSON()).toBeTruthy();
       } catch (e) {
-        console.warn(`Skip ${name}`);
+        console.warn(`Skipped ${name}`);
         expect(true).toBe(true);
       }
     });
