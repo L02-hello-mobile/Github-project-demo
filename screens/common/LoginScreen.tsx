@@ -14,6 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authService } from "../../services/authService";
 import { socketService } from "../../services/socketService";
+import * as Sentry from "@sentry/react-native"; // ✅ ADD THIS
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("");
@@ -26,23 +27,42 @@ export default function LoginScreen({ navigation }: any) {
       setError("Vui lòng nhập email và mật khẩu");
       return;
     }
+
     setLoading(true);
     setError("");
+
     try {
       const res = await authService.login(email.trim(), password);
+
       if (res.success) {
         await AsyncStorage.setItem("userToken", res.data.token);
         await AsyncStorage.setItem("userData", JSON.stringify(res.data));
         socketService.connect();
         navigation.replace("Main");
+
+        // ✅ SENTRY TEST EVENT (login success)
+        Sentry.Native.captureMessage("Login success - EventFlow");
       } else {
         setError(res.message || "Đăng nhập thất bại");
+
+        // ❌ SENTRY ERROR LOG
+        Sentry.Native.captureMessage("Login failed");
       }
     } catch (e) {
       setError("Lỗi kết nối server");
+
+      // ❌ SENTRY EXCEPTION
+      Sentry.Native.captureException(e);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 🔥 TEST BUTTON SENTRY
+  const testSentry = () => {
+    Sentry.Native.captureException(
+      new Error("🔥 TEST SENTRY FROM LOGIN SCREEN - EventFlow")
+    );
   };
 
   return (
@@ -50,7 +70,6 @@ export default function LoginScreen({ navigation }: any) {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      {/* 1. FIX KEYBOARD: Thêm keyboardShouldPersistTaps="handled" vào ScrollView */}
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -74,7 +93,6 @@ export default function LoginScreen({ navigation }: any) {
               <Text style={styles.label}>Email</Text>
               <TextInput
                 style={styles.inputUnderline}
-                placeholder="   "
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -84,11 +102,17 @@ export default function LoginScreen({ navigation }: any) {
               <Text style={styles.label}>Mật khẩu</Text>
               <TextInput
                 style={styles.inputUnderline}
-                placeholder="      "
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
               />
+
+              {/* 🔥 TEST SENTRY BUTTON */}
+              <TouchableOpacity onPress={testSentry} style={{ marginBottom: 15 }}>
+                <Text style={{ color: "red", fontWeight: "bold" }}>
+                  Test Sentry Error
+                </Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.forgotBtn}
@@ -131,6 +155,7 @@ export default function LoginScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   scrollContainer: { flexGrow: 1, backgroundColor: "#FFFFFF" },
   container: { flex: 1 },
+
   topBlob1: {
     position: "absolute",
     top: -54,
@@ -151,6 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#5F33E1",
     opacity: 0.44,
   },
+
   content: {
     flex: 1,
     paddingHorizontal: 30,
@@ -158,16 +184,17 @@ const styles = StyleSheet.create({
     paddingTop: 100,
     paddingBottom: 40,
   },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#000000",
     marginBottom: 30,
   },
+
   illustrationPlaceholder: { width: 150, height: 150, marginBottom: 30 },
   welcomeImg: { width: "100%", height: "100%" },
 
-  // 2. FIX Z-INDEX: Ép khối form nổi lên trên 2 cái blob absolute
   form: {
     width: "100%",
     zIndex: 10,
@@ -180,6 +207,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     marginBottom: 8,
   },
+
   inputUnderline: {
     borderBottomWidth: 1,
     borderBottomColor: "#D1D1D6",
@@ -188,22 +216,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#3C3C43",
   },
+
   forgotBtn: { alignSelf: "flex-end", marginBottom: 30 },
   forgotText: { color: "#5F33E1", fontWeight: "bold", fontSize: 14 },
+
   primaryBtn: {
     backgroundColor: "#5F33E1",
     paddingVertical: 16,
     borderRadius: 8,
     alignItems: "center",
   },
+
   primaryBtnDisabled: { opacity: 0.6 },
   primaryBtnText: { color: "#FFFFFF", fontSize: 16, fontWeight: "bold" },
+
   errorText: {
     color: "#E53E3E",
     fontSize: 13,
     marginBottom: 12,
     textAlign: "center",
   },
+
   footer: { flexDirection: "row", justifyContent: "center", marginTop: 20 },
   footerText: { color: "#3C3C43", fontSize: 14 },
   linkText: { color: "#5F33E1", fontWeight: "bold", fontSize: 14 },
