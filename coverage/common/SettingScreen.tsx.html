@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for context/SocketNotificationContext.tsx</title>
+    <title>Code coverage report for common/SettingScreen.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">context</a> SocketNotificationContext.tsx</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">common</a> SettingScreen.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">65.93% </span>
+                <span class="strong">73.07% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>60/91</span>
+                <span class='fraction'>38/52</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.88% </span>
+                <span class="strong">63.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>28/72</span>
+                <span class='fraction'>19/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.92% </span>
+                <span class="strong">47.05% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>20/26</span>
+                <span class='fraction'>8/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.51% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>55/78</span>
+                <span class='fraction'>35/49</span>
             </div>
         
             
@@ -360,7 +360,420 @@
 <a name='L295'></a><a href='#L295'>295</a>
 <a name='L296'></a><a href='#L296'>296</a>
 <a name='L297'></a><a href='#L297'>297</a>
-<a name='L298'></a><a href='#L298'>298</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a>
+<a name='L397'></a><a href='#L397'>397</a>
+<a name='L398'></a><a href='#L398'>398</a>
+<a name='L399'></a><a href='#L399'>399</a>
+<a name='L400'></a><a href='#L400'>400</a>
+<a name='L401'></a><a href='#L401'>401</a>
+<a name='L402'></a><a href='#L402'>402</a>
+<a name='L403'></a><a href='#L403'>403</a>
+<a name='L404'></a><a href='#L404'>404</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -373,38 +786,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -433,16 +829,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -453,505 +843,433 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { AppState, AppStateStatus } from "react-native";
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Animated,
+  ImageBackground,
+} from "react-native";
+import { ArrowIcon } from "../../components/Icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { socketService } from "../../services/socketService";
+import { notificationService } from "../../services/notificationService";
+import { unregisterPushToken } from "../../utils/pushNotifications";
+import {
+  Lock,
+  LogOut,
+  Bell,
+  AlarmClock,
+  CheckCircle2,
+  Globe,
+  Info,
+  FileText,
+  ChevronRight,
+} from "lucide-react-native";
 &nbsp;
-function formatNotifMessage(notif: any): string {
-  const source = notif?.notification ?? notif;
-  const taskName =
-    (typeof source?.task === "object" &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >source?.task?.title)</span> ||
-    source?.taskName ||
-    "";
-  const eventName =
-    (typeof source?.event === "object" &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >source?.event?.name)</span> ||
-    source?.eventName ||
-    "";
+type SettingRowProps = {
+  icon: React.ReactNode;
+  iconBg: string;
+  label: string;
+  value?: string;
+  hasArrow?: boolean;
+  labelColor?: string;
+  onPress?: () =&gt; void;
+  testID?: string;
+};
 &nbsp;
-  switch (source?.type) {
-    case "TASK_ASSIGNED": {
-<span class="cstat-no" title="statement not covered" >      if (taskName &amp;&amp; eventName)</span>
-<span class="cstat-no" title="statement not covered" >        return `Nhiệm vụ "${taskName}" thuộc sự kiện "${eventName}" đã được giao cho bạn`;</span>
-<span class="cstat-no" title="statement not covered" >      if (taskName) <span class="cstat-no" title="statement not covered" >return `Nhiệm vụ "${taskName}" đã được giao cho bạn`;</span></span>
-<span class="cstat-no" title="statement not covered" >      break;</span>
-    }
-    case "TASK_REMINDER": {
-<span class="cstat-no" title="statement not covered" >      if (taskName) <span class="cstat-no" title="statement not covered" >return `Nhắc nhở: Nhiệm vụ "${taskName}" sắp đến hạn`;</span></span>
-<span class="cstat-no" title="statement not covered" >      break;</span>
-    }
-    case "TASK_STATUS_CHANGED": {
-      const status = <span class="cstat-no" title="statement not covered" >source?.task?.status ?? source?.status;</span>
-<span class="cstat-no" title="statement not covered" >      if (status === "OVERDUE" &amp;&amp; taskName)</span>
-<span class="cstat-no" title="statement not covered" >        return `Nhiệm vụ "${taskName}" đã quá thời hạn`;</span>
-<span class="cstat-no" title="statement not covered" >      if (taskName) <span class="cstat-no" title="statement not covered" >return `Nhiệm vụ "${taskName}" đã cập nhật trạng thái`;</span></span>
-<span class="cstat-no" title="statement not covered" >      break;</span>
-    }
-    case "EVENT_INVITE": {
-<span class="cstat-no" title="statement not covered" >      if (eventName) <span class="cstat-no" title="statement not covered" >return `Bạn được mời tham gia sự kiện "${eventName}"`;</span></span>
-<span class="cstat-no" title="statement not covered" >      break;</span>
-    }
-  }
+function SettingRow({
+  icon,
+  iconBg,
+  label,
+  value,
+  hasArrow,
+  labelColor = "#1F2937",
+  onPress,
+  testID,
+}: SettingRowProps) {
   return (
-    source?.message ||
-<span class="branch-1 cbranch-no" title="branch not covered" >    source?.body </span>||
-<span class="branch-2 cbranch-no" title="branch not covered" >    source?.title </span>||
-<span class="branch-3 cbranch-no" title="branch not covered" >    notif?.message </span>||
-<span class="branch-4 cbranch-no" title="branch not covered" >    notif?.body </span>||
-<span class="branch-5 cbranch-no" title="branch not covered" >    notif?.title </span>||
-<span class="branch-6 cbranch-no" title="branch not covered" >    "Bạn có thông báo mới"</span>
+    &lt;TouchableOpacity
+      testID={testID}
+      style={styles.row}
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
+    &gt;
+      &lt;View style={[styles.iconBox, { backgroundColor: iconBg }]}&gt;{icon}&lt;/View&gt;
+      &lt;Text style={[styles.rowLabel, { color: labelColor }]}&gt;{label}&lt;/Text&gt;
+      &lt;View style={styles.rowRight}&gt;
+        {value ? &lt;Text style={styles.rowValue}&gt;{value}&lt;/Text&gt; : null}
+        {hasArrow &amp;&amp; &lt;ChevronRight size={18} color="#9CA3AF" /&gt;}
+      &lt;/View&gt;
+    &lt;/TouchableOpacity&gt;
   );
 }
-import { Animated, Platform, StyleSheet, Text, View } from "react-native";
-import * as Notifications from "expo-notifications";
-import { socketService } from "../services/socketService";
-import { notificationService } from "../services/notificationService";
 &nbsp;
-// ─── Types ─────────────────────────────────────────────────────────────────
-&nbsp;
-interface SocketNotificationContextValue {
-  /** Current toast message, null when no toast is visible */
-  toastMessage: string | null;
-  /** Global unread notification count — updates in real-time */
-  unreadCount: number;
-  /** Call after user views notifications to reset badge */
-  markAsRead: () =&gt; void;
-  /** Force refresh unread count from API */
-  refreshUnreadCount: () =&gt; void;
-}
-&nbsp;
-function extractUnreadCount(res: any): number {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (res == null) <span class="cstat-no" title="statement not covered" >return 0;</span>
-  const raw = res?.data?.count ?? <span class="branch-1 cbranch-no" title="branch not covered" >res?.count;</span>
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (raw == null) <span class="cstat-no" title="statement not covered" >return 0;</span>
-  const n = Number(raw);
-  return Number.isFinite(n) &amp;&amp; n &gt;= 0 ? Math.floor(n) : <span class="branch-1 cbranch-no" title="branch not covered" >0;</span>
-}
-&nbsp;
-// ─── Context ───────────────────────────────────────────────────────────────
-&nbsp;
-const SocketNotificationContext = createContext&lt;SocketNotificationContextValue&gt;(
-  {
-    toastMessage: null,
-    unreadCount: 0,
-    markAsRead: <span class="fstat-no" title="function not covered" >()</span> =&gt; {},
-    refreshUnreadCount: () =&gt; {},
-  },
-);
-&nbsp;
-// ─── Provider ──────────────────────────────────────────────────────────────
-&nbsp;
-const TOAST_VISIBLE_MS = 3000;
-&nbsp;
-export function SocketNotificationProvider({
-  children,
+function CustomToggle({
+  value,
+  onToggle,
+  testID,
 }: {
-  children: React.ReactNode;
+  value: boolean;
+  onToggle: (v: boolean) =&gt; void;
+  testID?: string;
 }) {
-  const [toastMessage, setToastMessage] = useState&lt;string | null&gt;(null);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const anim = useRef(new Animated.Value(value ? 1 : <span class="branch-1 cbranch-no" title="branch not covered" >0)</span>).current;
 &nbsp;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const timerRef = useRef&lt;ReturnType&lt;typeof setTimeout&gt; | null&gt;(null);
+  const handlePress = <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+    const next = <span class="cstat-no" title="statement not covered" >!value;</span>
+<span class="cstat-no" title="statement not covered" >    Animated.timing(anim, {</span>
+      toValue: next ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+<span class="cstat-no" title="statement not covered" >    onToggle(next);</span>
+  };
 &nbsp;
-  const syncUnreadCount = useCallback((count: number) =&gt; {
-    setUnreadCount((prev) =&gt; Math.max(prev, count));
+  const translateX = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [3, 27],
+  });
+  const bgColor = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#E5E7EB", "#5F33E1"],
+  });
+&nbsp;
+  return (
+    &lt;TouchableOpacity
+      testID={testID}
+      activeOpacity={0.85}
+      onPress={handlePress}
+    &gt;
+      &lt;Animated.View style={[styles.track, { backgroundColor: bgColor }]}&gt;
+        &lt;Animated.View
+          style={[styles.thumb, { transform: [{ translateX }] }]}
+        /&gt;
+      &lt;/Animated.View&gt;
+    &lt;/TouchableOpacity&gt;
+  );
+}
+&nbsp;
+type ToggleRowProps = {
+  icon: React.ReactNode;
+  iconBg: string;
+  label: string;
+  value: boolean;
+  onToggle: (v: boolean) =&gt; void;
+  testID?: string;
+};
+&nbsp;
+function ToggleRow({
+  icon,
+  iconBg,
+  label,
+  value,
+  onToggle,
+  testID,
+}: ToggleRowProps) {
+  return (
+    &lt;View style={styles.row}&gt;
+      &lt;View style={[styles.iconBox, { backgroundColor: iconBg }]}&gt;{icon}&lt;/View&gt;
+      &lt;Text style={styles.rowLabel}&gt;{label}&lt;/Text&gt;
+      &lt;CustomToggle testID={testID} value={value} onToggle={onToggle} /&gt;
+    &lt;/View&gt;
+  );
+}
+&nbsp;
+export default function SettingScreen({ navigation }: any) {
+  const [userData, setUserData] = useState&lt;any&gt;(null);
+  const [notifAll, setNotifAll] = useState(true);
+  const [notifReminder, setNotifReminder] = useState(true);
+  const [notifTask, setNotifTask] = useState(true);
+&nbsp;
+  useEffect(() =&gt; {
+    loadUserData();
+    loadNotifSettings();
   }, []);
 &nbsp;
-  // Fetch initial unread count from API
-  useEffect(() =&gt; {
-    (async () =&gt; {
-      try {
-        const res = await notificationService.getUnreadCount();
-        syncUnreadCount(extractUnreadCount(res));
-      } catch {}
-    })();
-  }, [syncUnreadCount]);
-&nbsp;
-  const refreshUnreadCount = useCallback(<span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const res = <span class="cstat-no" title="statement not covered" >await notificationService.getUnreadCount();</span>
-<span class="cstat-no" title="statement not covered" >      syncUnreadCount(extractUnreadCount(res));</span>
+  const loadUserData = async () =&gt; {
+    try {
+      const stored = await AsyncStorage.getItem("userData");
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (stored) setUserData(JSON.parse(stored));
     } catch {}
-  }, [syncUnreadCount]);
+  };
 &nbsp;
-  const showToast = useCallback(
-    (message: string) =&gt; {
-      // Reset animation and set message
-      fadeAnim.setValue(0);
-      setToastMessage(message);
-      setUnreadCount((c) =&gt; c + 1);
+  const loadNotifSettings = async () =&gt; {
+    try {
+      const res = await notificationService.getSettings();
+      const s = res?.data ?? <span class="branch-1 cbranch-no" title="branch not covered" >res </span>?? <span class="branch-2 cbranch-no" title="branch not covered" >{};</span>
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof s.allNotifications === "boolean")
+        setNotifAll(s.allNotifications);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof s.taskReminder === "boolean") setNotifReminder(s.taskReminder);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof s.taskAssigned === "boolean") setNotifTask(s.taskAssigned);
+    } catch {}
+  };
 &nbsp;
-      // Fade in
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-&nbsp;
-      // Auto-dismiss
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (timerRef.current) <span class="cstat-no" title="statement not covered" >clearTimeout(timerRef.current);</span>
-      timerRef.current = setTimeout(() =&gt; {
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() =&gt; setToastMessage(null));
-      }, TOAST_VISIBLE_MS);
-    },
-    [fadeAnim],
-  );
-&nbsp;
-  useEffect(() =&gt; {
-    const handleNewNotification = (data: any) =&gt; {
-      const notif = data?.notification ?? data;
-      const msg = formatNotifMessage(notif);
-      showToast(msg);
-&nbsp;
-      // Fire a local system notification (banner + sound) so the user gets
-      // an OS-level alert even when the app is in the foreground or background.
-      const title: string =
-        (typeof notif?.task === "object" &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >notif?.task?.title)</span> ||
-        notif?.taskName ||
-        notif?.title ||
-        "Thông báo mới";
-      Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body: msg,
-          sound: true,
-          // Android: must match the channel created in App.tsx
-          ...(Platform.OS === "android" &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >{ channelId: "default" })</span>,
-          data: notif,
-        },
-        trigger: null, // deliver immediately
-      }).catch(<span class="fstat-no" title="function not covered" >(e</span>rr) =&gt; {
-<span class="cstat-no" title="statement not covered" >        if (__DEV__)</span>
-<span class="cstat-no" title="statement not covered" >          console.warn("[SocketNotif] scheduleNotification failed:", err);</span>
-      });
+  const handleToggle = <span class="fstat-no" title="function not covered" >(f</span>ield: string, value: boolean) =&gt; {
+    const fieldMap: Record&lt;string, string&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+      all: "allNotifications",
+      reminder: "taskReminder",
+      task: "taskAssigned",
     };
+    const apiField = <span class="cstat-no" title="statement not covered" >fieldMap[field] || field;</span>
+<span class="cstat-no" title="statement not covered" >    notificationService.updateSettings({ [apiField]: value }).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {});</span>
+  };
 &nbsp;
-    socketService.addNotificationListener(handleNewNotification);
+  const handleLogout = async () =&gt; {
+    await unregisterPushToken().catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {});
+    await AsyncStorage.multiRemove(["userToken", "userData"]);
+    socketService.disconnect();
+    navigation.replace("Start");
+  };
 &nbsp;
-    return () =&gt; {
-      socketService.removeNotificationListener(handleNewNotification);
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [showToast]);
-&nbsp;
-  // Poll every 30 s while the app is in the foreground (fallback when socket
-  // doesn't fire, e.g. Expo Go SDK 53 where remote push is unsupported)
-  useEffect(() =&gt; {
-    const POLL_MS = 30_000;
-    const id = setInterval(<span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >      if (AppState.currentState === "active") {</span>
-<span class="cstat-no" title="statement not covered" >        refreshUnreadCount();</span>
-      }
-    }, POLL_MS);
-    return () =&gt; clearInterval(id);
-  }, [refreshUnreadCount]);
-&nbsp;
-  useEffect(() =&gt; {
-    const subscription = AppState.addEventListener(
-      "change",
-<span class="fstat-no" title="function not covered" >      (n</span>extState: AppStateStatus) =&gt; {
-<span class="cstat-no" title="statement not covered" >        if (nextState === "active") {</span>
-<span class="cstat-no" title="statement not covered" >          refreshUnreadCount();</span>
-          // Re-attach socket listeners after the app resumes (socket may have
-          // silently disconnected while in the background)
-<span class="cstat-no" title="statement not covered" >          socketService.reconnectIfNeeded();</span>
-        }
-      },
-    );
-&nbsp;
-    return () =&gt; subscription.remove();
-  }, [refreshUnreadCount]);
-&nbsp;
-  const markAsRead = useCallback(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setUnreadCount(0),</span> []);
+  const initial = (userData?.fullName || "U")[0].toUpperCase();
 &nbsp;
   return (
-    &lt;SocketNotificationContext.Provider
-      value={{ toastMessage, unreadCount, markAsRead, refreshUnreadCount }}
+    &lt;ImageBackground
+      source={require("../../assets/bgSplash.png")}
+      style={styles.bg}
+      resizeMode="cover"
     &gt;
-      &lt;View style={{ flex: 1 }}&gt;
-        {children}
-&nbsp;
-        {/* Global notification toast — floats above all screens */}
-        {toastMessage !== null &amp;&amp; (
-          &lt;Animated.View
-            testID="notification-toast"
-            style={[styles.toast, { opacity: fadeAnim }]}
-            pointerEvents="none"
-          &gt;
-            &lt;View style={styles.toastRow}&gt;
-              &lt;View style={styles.toastDot} /&gt;
-              &lt;Text style={styles.toastTitle}&gt;Thông báo mới&lt;/Text&gt;
-            &lt;/View&gt;
-            &lt;Text style={styles.toastMsg} numberOfLines={2}&gt;
-              {toastMessage}
-            &lt;/Text&gt;
-          &lt;/Animated.View&gt;
-        )}
+      {/* Header */}
+      &lt;View style={styles.header}&gt;
+        &lt;TouchableOpacity
+          onPress={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >navigation.goBack()}</span>
+          style={styles.headerBtn}
+        &gt;
+          &lt;View style={{ transform: [{ scaleX: -1 }] }}&gt;
+            &lt;ArrowIcon color="#1F2937" size={22} /&gt;
+          &lt;/View&gt;
+        &lt;/TouchableOpacity&gt;
+        &lt;Text style={styles.headerTitle}&gt;CÀI ĐẶT&lt;/Text&gt;
+        &lt;View style={styles.headerBtn} /&gt;
       &lt;/View&gt;
-    &lt;/SocketNotificationContext.Provider&gt;
+&nbsp;
+      &lt;ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      &gt;
+        {/* ── TÀI KHOẢN &amp; BẢO MẬT ── */}
+        &lt;Text style={styles.sectionLabel}&gt;TÀI KHOẢN &amp;amp; BẢO MẬT&lt;/Text&gt;
+        &lt;View style={styles.card}&gt;
+          {/* User info */}
+          &lt;View style={styles.userRow}&gt;
+            &lt;View style={styles.avatar}&gt;
+              &lt;Text style={styles.avatarTxt}&gt;{initial}&lt;/Text&gt;
+            &lt;/View&gt;
+            &lt;View&gt;
+              &lt;Text testID="setting-user-name" style={styles.userName}&gt;
+                {userData?.fullName || "Đang tải..."}
+              &lt;/Text&gt;
+              &lt;Text testID="setting-user-email" style={styles.userEmail}&gt;
+                {userData?.email || ""}
+              &lt;/Text&gt;
+            &lt;/View&gt;
+          &lt;/View&gt;
+&nbsp;
+          &lt;View style={styles.divider} /&gt;
+&nbsp;
+          &lt;SettingRow
+            icon={&lt;Lock size={18} color="#FFF" /&gt;}
+            iconBg="#6366F1"
+            label="Đổi mật khẩu"
+            hasArrow
+            onPress={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >navigation.navigate("Account")}</span>
+          /&gt;
+&nbsp;
+          &lt;View style={styles.divider} /&gt;
+&nbsp;
+          &lt;SettingRow
+            testID="btn-logout"
+            icon={&lt;LogOut size={18} color="#FFF" /&gt;}
+            iconBg="#EF4444"
+            label="Đăng xuất"
+            labelColor="#EF4444"
+            onPress={handleLogout}
+          /&gt;
+        &lt;/View&gt;
+&nbsp;
+        {/* ── THÔNG BÁO ── */}
+        &lt;Text style={styles.sectionLabel}&gt;THÔNG BÁO&lt;/Text&gt;
+        &lt;View style={styles.card}&gt;
+          &lt;ToggleRow
+            icon={&lt;Bell size={18} color="#FFF" /&gt;}
+            iconBg="#6366F1"
+            label="Tất cả thông báo"
+            value={notifAll}
+            testID="toggle-notif-all"
+            onToggle={<span class="fstat-no" title="function not covered" >(v</span>) =&gt; {
+<span class="cstat-no" title="statement not covered" >              setNotifAll(v);</span>
+<span class="cstat-no" title="statement not covered" >              handleToggle("all", v);</span>
+            }}
+          /&gt;
+          &lt;View style={styles.divider} /&gt;
+          &lt;ToggleRow
+            icon={&lt;AlarmClock size={18} color="#FFF" /&gt;}
+            iconBg="#F97316"
+            label="Nhắc việc (5 phút trước)"
+            value={notifReminder}
+            testID="toggle-notif-reminder"
+            onToggle={<span class="fstat-no" title="function not covered" >(v</span>) =&gt; {
+<span class="cstat-no" title="statement not covered" >              setNotifReminder(v);</span>
+<span class="cstat-no" title="statement not covered" >              handleToggle("reminder", v);</span>
+            }}
+          /&gt;
+          &lt;View style={styles.divider} /&gt;
+          &lt;ToggleRow
+            icon={&lt;CheckCircle2 size={18} color="#FFF" /&gt;}
+            iconBg="#22C55E"
+            label="Task được giao"
+            value={notifTask}
+            testID="toggle-notif-task"
+            onToggle={<span class="fstat-no" title="function not covered" >(v</span>) =&gt; {
+<span class="cstat-no" title="statement not covered" >              setNotifTask(v);</span>
+<span class="cstat-no" title="statement not covered" >              handleToggle("task", v);</span>
+            }}
+          /&gt;
+        &lt;/View&gt;
+&nbsp;
+        {/* ── ỨNG DỤNG ── */}
+        &lt;Text style={styles.sectionLabel}&gt;ỨNG DỤNG&lt;/Text&gt;
+        &lt;View style={styles.card}&gt;
+          &lt;SettingRow
+            icon={&lt;Globe size={18} color="#FFF" /&gt;}
+            iconBg="#3B82F6"
+            label="Ngôn ngữ"
+            value="Tiếng Việt"
+            hasArrow
+          /&gt;
+          &lt;View style={styles.divider} /&gt;
+          &lt;SettingRow
+            icon={&lt;Info size={18} color="#FFF" /&gt;}
+            iconBg="#9CA3AF"
+            label="Phiên bản"
+            value="1.0.0"
+          /&gt;
+          &lt;View style={styles.divider} /&gt;
+          &lt;SettingRow
+            icon={&lt;FileText size={18} color="#FFF" /&gt;}
+            iconBg="#6B7280"
+            label="Chính sách &amp; Điều khoản"
+            hasArrow
+          /&gt;
+        &lt;/View&gt;
+      &lt;/ScrollView&gt;
+    &lt;/ImageBackground&gt;
   );
 }
 &nbsp;
-// ─── Hook ──────────────────────────────────────────────────────────────────
-&nbsp;
-export function useSocketNotification(): SocketNotificationContextValue {
-  return useContext(SocketNotificationContext);
-}
-&nbsp;
-// ─── Styles ────────────────────────────────────────────────────────────────
-&nbsp;
 const styles = StyleSheet.create({
-  toast: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? 54 : <span class="branch-1 cbranch-no" title="branch not covered" >40,</span>
-    left: 16,
-    right: 16,
-    backgroundColor: "#1F2937",
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    zIndex: 9999,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  toastRow: {
+  bg: { flex: 1, backgroundColor: "#FFF" },
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 3,
+    justifyContent: "space-between",
+    paddingTop: 52,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
-  toastDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#6366F1",
-    marginRight: 6,
+  headerBtn: { width: 36, alignItems: "center" },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1F2937",
+    letterSpacing: 1,
   },
-  toastTitle: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 13,
+  content: { paddingHorizontal: 20, paddingBottom: 120 },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#9CA3AF",
+    letterSpacing: 1,
+    marginBottom: 8,
+    marginTop: 20,
+    marginLeft: 4,
   },
-  toastMsg: {
-    color: "#D1D5DB",
-    fontSize: 13,
-    lineHeight: 18,
+  card: {
+    backgroundColor: "#FFF",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
+  },
+  userRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    gap: 12,
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#EDE8FF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarTxt: { fontSize: 18, fontWeight: "700", color: "#6366F1" },
+  userName: { fontSize: 15, fontWeight: "700", color: "#1F2937" },
+  userEmail: { fontSize: 12, color: "#9CA3AF", marginTop: 2 },
+  divider: { height: 1, backgroundColor: "#F3F4F6" },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    gap: 12,
+  },
+  iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rowLabel: { flex: 1, fontSize: 15, color: "#1F2937", fontWeight: "500" },
+  rowRight: { flexDirection: "row", alignItems: "center", gap: 4 },
+  rowValue: { fontSize: 13, color: "#9CA3AF" },
+  track: {
+    width: 56,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+  },
+  thumb: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
   },
 });
 &nbsp;</pre></td></tr></table></pre>
@@ -961,7 +1279,7 @@ const styles = StyleSheet.create({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-27T16:15:31.418Z
+                at 2026-05-27T16:16:34.427Z
             </div>
         <script src="../prettify.js"></script>
         <script>

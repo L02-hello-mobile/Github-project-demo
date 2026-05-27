@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">53.12% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/32</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">54.54% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/22</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">53.12% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/32</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -319,22 +319,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -359,7 +359,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -447,7 +447,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -459,7 +459,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -558,23 +558,23 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authService } from "../../services/authService";
 &nbsp;
-export default function SignUpScreen({ navigation }: any) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+export default function <span class="fstat-no" title="function not covered" >SignUpScreen(</span>{ navigation }: any) {
+  const [firstName, setFirstName] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+  const [lastName, setLastName] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+  const [email, setEmail] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+  const [password, setPassword] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+  const [confirmPassword, setConfirmPassword] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+  const [loading, setLoading] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
+  const [error, setError] = <span class="cstat-no" title="statement not covered" >useState("");</span>
 &nbsp;
-  const handleSignUp = async () =&gt; {
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password) {
-      setError("Vui lòng điền đầy đủ thông tin");
-      return;
+  const handleSignUp = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password) {</span>
+<span class="cstat-no" title="statement not covered" >      setError("Vui lòng điền đầy đủ thông tin");</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
     }
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (password !== confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
-      return;
+<span class="cstat-no" title="statement not covered" >    if (password !== confirmPassword) {</span>
+<span class="cstat-no" title="statement not covered" >      setError("Mật khẩu xác nhận không khớp");</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
     }
 <span class="cstat-no" title="statement not covered" >    if (password.length &lt; 6) {</span>
 <span class="cstat-no" title="statement not covered" >      setError("Mật khẩu phải có ít nhất 6 ký tự");</span>
@@ -599,10 +599,10 @@ export default function SignUpScreen({ navigation }: any) {
     }
   };
 &nbsp;
-  return (
+<span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : <span class="branch-1 cbranch-no" title="branch not covered" >"height"}</span>
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     &gt;
       &lt;ScrollView
         contentContainerStyle={styles.scrollContainer}
@@ -673,13 +673,13 @@ export default function SignUpScreen({ navigation }: any) {
               &lt;TouchableOpacity
                 style={[
                   styles.primaryBtn,
-                  loading &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >styles.primaryBtnDisabled,</span>
+                  loading &amp;&amp; styles.primaryBtnDisabled,
                 ]}
                 onPress={handleSignUp}
                 disabled={loading}
               &gt;
                 {loading ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >                  &lt;ActivityIndicator color="#FFFFFF" /&gt;</span>
+                  &lt;ActivityIndicator color="#FFFFFF" /&gt;
                 ) : (
                   &lt;Text style={styles.primaryBtnText}&gt;Đăng ký&lt;/Text&gt;
                 )}
@@ -687,7 +687,7 @@ export default function SignUpScreen({ navigation }: any) {
 &nbsp;
               &lt;View style={styles.footer}&gt;
                 &lt;Text style={styles.footerText}&gt;Đã có tài khoản? &lt;/Text&gt;
-                &lt;TouchableOpacity onPress={() =&gt; navigation.navigate("Login")}&gt;
+                &lt;TouchableOpacity onPress={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >navigation.navigate("Login")}</span>&gt;
                   &lt;Text style={styles.linkText}&gt;Đăng nhập&lt;/Text&gt;
                 &lt;/TouchableOpacity&gt;
               &lt;/View&gt;
@@ -699,7 +699,7 @@ export default function SignUpScreen({ navigation }: any) {
   );
 }
 &nbsp;
-const styles = StyleSheet.create({
+const styles = <span class="cstat-no" title="statement not covered" >StyleSheet.create({</span>
   scrollContainer: { flexGrow: 1, backgroundColor: "#FFFFFF" },
   container: { flex: 1 },
   topBlob1: {
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-24T05:47:07.923Z
+                at 2026-05-27T16:14:14.027Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
