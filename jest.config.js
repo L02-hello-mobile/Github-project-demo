@@ -8,7 +8,6 @@ module.exports = {
   collectCoverageFrom: [
     "screens/common/AccountScreen.tsx",
     "screens/common/OnboardingScreen.tsx",
-    "screens/common/SettingScreen.tsx",
     "screens/organizer/EventDetailScreen.tsx",
   ],
   coverageReporters: ["lcov", "text", "clover", "html"],
